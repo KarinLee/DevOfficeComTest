@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{29B5141A-A93C-4E88-AD52-B6E38A54E770}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TestFramework</RootNamespace>
+    <AssemblyName>TestFramework</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WebDriver, Version=2.50.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Selenium.WebDriver.2.50.1\lib\net40\WebDriver.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WebDriver.Support, Version=2.50.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Selenium.Support.2.50.1\lib\net40\WebDriver.Support.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BasePage.cs" />
+    <Compile Include="Browser.cs" />
+    <Compile Include="DataStructure\Structures.cs" />
+    <Compile Include="ChoosingAPIEndpointPage.cs" />
+    <Compile Include="CodeSamplesPage.cs" />
+    <Compile Include="DataStructure\Utility.cs" />
+    <Compile Include="DocumentationPage.cs" />
+    <Compile Include="DataStructure\Enums.cs" />
+    <Compile Include="FabricGettingStartedPage.cs" />
+    <Compile Include="FabricPage.cs" />
+    <Compile Include="GraphPage.cs" />
+    <Compile Include="Navigation.cs" />
+    <Compile Include="Office365Page\CardDownloadCode.cs" />
+    <Compile Include="Office365Page\CardMoreResources.cs" />
+    <Compile Include="Office365Page\CardSetupPlatform.cs" />
+    <Compile Include="HomePage.cs" />
+    <Compile Include="Office365Page\CardRegisterApp.cs" />
+    <Compile Include="Office365Page\CardTryItOut.cs" />
+    <Compile Include="Office365Page\Office365Page.cs" />
+    <Compile Include="OfficeAddInPage\CardBuild.cs" />
+    <Compile Include="OfficeAddInPage\CardChooseProduct.cs" />
+    <Compile Include="OfficeAddInPage\CardExplore.cs" />
+    <Compile Include="OfficeAddInPage\CardExcel.cs" />
+    <Compile Include="OfficeAddInPage\CardWord.cs" />
+    <Compile Include="OfficeAddInPage\CardOutlook.cs" />
+    <Compile Include="OfficeAddInPage\CardPowerPoint.cs" />
+    <Compile Include="OfficeAddInPage\CardMoreResources.cs" />
+    <Compile Include="OfficeAddInPage\OfficeAddInPage.cs" />
+    <Compile Include="OfficeGettingStartedPage.cs" />
+    <Compile Include="OpportunityPage.cs" />
+    <Compile Include="NewWindowPage.cs" />
+    <Compile Include="Pages.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ProductPage.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResourcePage.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Drivers\chromedriver.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Drivers\IE32\IEDriverServer.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Drivers\IE64\IEDriverServer.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
