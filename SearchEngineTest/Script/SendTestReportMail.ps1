@@ -180,7 +180,7 @@ foreach($tempFile in $fileList)
     $attachment = new-Object System.Net.Mail.Attachment($traceFileName)
     $mail.Attachments.Add($attachment)
     $baseName=$traceFileName.SubString($traceFileName.LastIndexOf("\")+1);
-    $mail.Body+="<div style=`"font-size: 12pt;`"> <br/>Trace file:$baseName</div>";
+    $mail.Body+="<div style=`"font-size: 12pt;`"> <br/>Trace file:$baseName</div><br/>";
 }
 
 $mail.Body+='<div style="font-size: 12pt;"> <br/>For details please see the attachment.</div>';
