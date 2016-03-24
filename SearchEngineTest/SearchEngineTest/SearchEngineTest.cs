@@ -171,9 +171,10 @@ namespace SearchEngineTest
                 int inputCount = WebDriver.FindElements(By.TagName("input")).Count;
                 for (int i = 0; i < inputCount; i++)
                 {
-                    IWebElement element = WebDriver.FindElements(By.TagName("input"))[i];
                     try
                     {
+                        IWebElement element = WebDriver.FindElements(By.TagName("input"))[i];
+                    
                         if (element.Enabled && element.Displayed)
                         {
                             element.Clear();
@@ -183,7 +184,7 @@ namespace SearchEngineTest
                     }
                     catch (StaleElementReferenceException)
                     {
-                        element = WebDriver.FindElements(By.TagName("input"))[i];
+                        IWebElement element = WebDriver.FindElements(By.TagName("input"))[i];
                         if (element.Enabled && element.Displayed)
                         {
                             element.Clear();
@@ -199,7 +200,7 @@ namespace SearchEngineTest
             {
                 case "google":
                     wait.Until(ExpectedConditions.ElementExists(By.CssSelector("h3>a")));
-                    searchedResults = GetSearchResults("h3>a");
+                    searchedResults = GetSearchResults("div>h3>a");
                     break;
                 case "bing":
                     wait.Until(ExpectedConditions.ElementExists(By.CssSelector("li>h2>a")));
