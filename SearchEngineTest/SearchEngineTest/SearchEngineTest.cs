@@ -18,7 +18,7 @@ namespace SearchEngineTest
         static string searchEngine = ConfigurationManager.AppSettings["SearchEngine"].ToLower();
         public static IWebDriver WebDriver;
         static int lowestRanking = Int32.Parse(ConfigurationManager.AppSettings["LowestRanking"]);
-        
+
         [ClassInitialize]
         public static void ClassInitialize(TestContext context)
         {
@@ -71,6 +71,7 @@ namespace SearchEngineTest
                 searchEngine,
                 GetDescription(SearchSite.MSGraph));
 
+            WebDriver.Navigate().Back();
             time = DateTime.Now;
             isFounded = CanFindSiteinSearchResults(SearchSite.MSGraphAPI,
                 "graph.microsoft.io",
@@ -84,6 +85,7 @@ namespace SearchEngineTest
                 searchEngine,
                 GetDescription(SearchSite.MSGraphAPI));
 
+            WebDriver.Navigate().Back();
             time = DateTime.Now;
             isFounded = CanFindSiteinSearchResults(SearchSite.GraphMS,
                 "graph.microsoft.io",
@@ -96,6 +98,8 @@ namespace SearchEngineTest
                 isFounded ? String.Format(" at position {0} is", ranking + 1) : "s in top 5 don't contain",
                 searchEngine,
                 GetDescription(SearchSite.GraphMS));
+
+            WebDriver.Navigate().Back();
         }
 
         /// <summary>
@@ -120,6 +124,7 @@ namespace SearchEngineTest
                 searchEngine,
                 GetDescription(SearchSite.OfficeDevCenter));
 
+            WebDriver.Navigate().Back();
             time = DateTime.Now;
             isFounded = CanFindSiteinSearchResults(SearchSite.DevOffice,
                 "dev.office.com",
@@ -132,6 +137,8 @@ namespace SearchEngineTest
                 isFounded ? String.Format(" at position {0} is", ranking + 1) : "s in top 5 don't contain",
                 searchEngine,
                 GetDescription(SearchSite.DevOffice));
+
+            WebDriver.Navigate().Back();
         }
 
         /// <summary>
@@ -167,39 +174,25 @@ namespace SearchEngineTest
             string keyWord = GetDescription(searchSite);
             int waitTime = Int32.Parse(ConfigurationManager.AppSettings["WaitTime"]);
             var wait = new WebDriverWait(WebDriver, TimeSpan.FromSeconds(waitTime));
-           
-                int inputCount = WebDriver.FindElements(By.TagName("input")).Count;
-                for (int i = 0; i < inputCount; i++)
+            int inputCount = WebDriver.FindElements(By.TagName("input")).Count;
+            for (int i = 0; i < inputCount; i++)
+            {
+                IWebElement element = WebDriver.FindElements(By.TagName("input"))[i];
+
+                if (element.Enabled && element.Displayed)
                 {
-                    try
-                    {
-                        IWebElement element = WebDriver.FindElements(By.TagName("input"))[i];
-                    
-                        if (element.Enabled && element.Displayed)
-                        {
-                            element.Clear();
-                            element.SendKeys(keyWord + "\n");
-                            break;
-                        }
-                    }
-                    catch (StaleElementReferenceException)
-                    {
-                        IWebElement element = WebDriver.FindElements(By.TagName("input"))[i];
-                        if (element.Enabled && element.Displayed)
-                        {
-                            element.Clear();
-                            element.SendKeys(keyWord + "\n");
-                            break;
-                        }
-                    }
+                    element.Clear();
+                    element.SendKeys(keyWord + "\n");
+                    break;
                 }
-            
+            }
+
             List<SearchedResult> searchedResults = new List<SearchedResult>();
-            
+
             switch (searchEngine)
             {
                 case "google":
-                    wait.Until(ExpectedConditions.ElementExists(By.CssSelector("h3>a")));
+                    wait.Until(ExpectedConditions.ElementExists(By.CssSelector("div>h3>a")));
                     searchedResults = GetSearchResults("div>h3>a");
                     break;
                 case "bing":
@@ -220,20 +213,15 @@ namespace SearchEngineTest
         /// <returns>Searched results</returns>
         private static List<SearchedResult> GetSearchResults(string selectorString)
         {
-            int waitTime = Int32.Parse(ConfigurationManager.AppSettings["WaitTime"]);
-            var wait = new WebDriverWait(WebDriver, TimeSpan.FromSeconds(waitTime));
             List<SearchedResult> searchedResults = new List<SearchedResult>();
 
-            wait.Until(ExpectedConditions.ElementExists(By.CssSelector(selectorString)));
             int resultCount = WebDriver.FindElements(By.CssSelector(selectorString)).Count;
             int range = resultCount > lowestRanking ? lowestRanking : resultCount;
             for (int i = 0; i < range; i++)
             {
-                SearchedResult result = new SearchedResult
-                {
-                    Name = WebDriver.FindElements(By.CssSelector(selectorString))[i].Text,
-                    DetailLink = WebDriver.FindElements(By.CssSelector(selectorString))[i].GetAttribute("href")
-                };
+                SearchedResult result = new SearchedResult();
+                result.Name = WebDriver.FindElements(By.CssSelector(selectorString))[i].GetAttribute("innerHTML");
+                result.DetailLink = WebDriver.FindElements(By.CssSelector(selectorString))[i].GetAttribute("href");
                 searchedResults.Add(result);
             }
             return searchedResults;
