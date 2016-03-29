@@ -349,6 +349,7 @@ namespace TestFramework
                 case "RSS":
                     if (webDriver.Url.Contains("feedburner.com/office/fmNx"))
                     {
+                        SwitchBack();
                         return true;
                     }
                     break;

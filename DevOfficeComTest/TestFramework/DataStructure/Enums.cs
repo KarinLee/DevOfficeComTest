@@ -131,8 +131,8 @@ namespace TestFramework
         MicrosoftGraphAPI,
         [Description("Office 365 REST APIs")]
         Office365RESTAPIs,
-        [Description("Previous Versions")]
-        PreviousVersions
+        [Description("All Documentation")]
+        AllDocumentation
     }
 
     public enum SliderMenuItem

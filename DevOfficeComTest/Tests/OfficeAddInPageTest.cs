@@ -14,6 +14,12 @@ namespace Tests
             Browser.SetWaitTime(TimeSpan.FromSeconds(Utility.DefaultWaitTime));
         }
 
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            Browser.SwitchBack();
+        }
+
         /// <summary>
         /// Verify whether the navigation item style can be updated when it is chosen or rejected.
         /// </summary>

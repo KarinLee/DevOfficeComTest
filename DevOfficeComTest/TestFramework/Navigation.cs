@@ -58,7 +58,7 @@ namespace TestFramework
                         case (MenuItemOfExplore.WhyOffice):
                         case (MenuItemOfExplore.OfficeUIFabric):
                         case (MenuItemOfExplore.MicrosoftGraph):
-                            item = Browser.Driver.FindElement(By.CssSelector("#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > ul > li:nth-child(" + ((int)exploreItem + 1) + ") > a"));
+                            item = Browser.Driver.FindElement(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > ul > li:nth-child(" + ((int)exploreItem + 1) + ") > a"));
                             break;
                         case (MenuItemOfExplore.Android):
                         case (MenuItemOfExplore.DotNET):
@@ -68,10 +68,10 @@ namespace TestFramework
                         case (MenuItemOfExplore.PHP):
                         case (MenuItemOfExplore.Python):
                         case (MenuItemOfExplore.Ruby):
-                            item = Browser.Driver.FindElement(By.CssSelector("#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > div.tier-3.col-md-6.col-sm-5 > ul > li:nth-child(" + ((int)exploreItem - 13) + ") > a"));
+                            item = Browser.Driver.FindElement(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > div.tier-3.col-md-6.col-sm-5 > ul > li:nth-child(" + ((int)exploreItem - 13) + ") > a"));
                             break;
                         default:
-                            IReadOnlyList<IWebElement> elements = Browser.Driver.FindElements(By.CssSelector("#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > div.tier-2.col-md-3.col-sm-4 > ul > li> a"));
+                            IReadOnlyList<IWebElement> elements = Browser.Driver.FindElements(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > div.tier-2.col-md-3.col-sm-4 > ul > li> a"));
                             for (int i = 0; i < elements.Count; i++)
                             {
                                 if (elements[i].Text.ToLower().Contains(itemName.ToLower()))
@@ -82,7 +82,7 @@ namespace TestFramework
                                 else
                                 {
                                     // In case of elements expire, reload them
-                                    elements = Browser.Driver.FindElements(By.CssSelector("#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > div.tier-2.col-md-3.col-sm-4 > ul > li> a"));
+                                    elements = Browser.Driver.FindElements(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > div.tier-2.col-md-3.col-sm-4 > ul > li> a"));
                                 }
                             }
                             break;
@@ -96,14 +96,32 @@ namespace TestFramework
 
                 if (Enum.TryParse(itemName, out resourceItem))
                 {
-                    var item = Browser.Driver.FindElement(By.CssSelector("#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > ul > li:nth-child(" + ((int)resourceItem + 1) + ") > a"));
+                    var item = Browser.Driver.FindElement(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > ul > li:nth-child(" + ((int)resourceItem + 1) + ") > a"));
                     Browser.Click(item);
                 }
 
                 if (Enum.TryParse(itemName, out documentationItem))
                 {
-                    var item = Browser.Driver.FindElement(By.CssSelector("#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > ul > li:nth-child(" + ((int)documentationItem + 1) + ") > a"));
-                    Browser.Click(item);
+                    IWebElement item = null;
+                    var elements = Browser.Driver.FindElements(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > ul > li> a"));
+                    for (int i = 0; i < elements.Count; i++)
+                    {
+                        string description = EnumExtension.GetDescription(documentationItem);
+                        if (elements[i].Text.ToLower().Contains(description.ToLower()))
+                        {
+                            item = elements[i];
+                            break;
+                        }
+                        else
+                        {
+                            // In case of elements expire, reload them
+                            elements = Browser.Driver.FindElements(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > ul > li> a"));
+                        }
+                    }
+                    if (item != null)
+                    {
+                        Browser.Click(item);
+                    }
                 }
             }
         }
@@ -253,8 +271,10 @@ namespace TestFramework
                     return IsAtChoosingAPIEndpointPage("Choosing your API endpoint");
                 case (MenuItemOfDocumentation.MicrosoftGraphAPI):
                     return IsAtDocumentationPage("Microsoft Graph");
-                case (MenuItemOfDocumentation.PreviousVersions):
+                case (MenuItemOfDocumentation.AllDocumentation):
                     return IsAtDocumentationPage("Office developer documentation");
+                case (MenuItemOfDocumentation.OfficeAddin):
+                    return IsAtDocumentationPage("office-add-ins");
                 default:
                     return IsAtDocumentationPage(EnumExtension.GetDescription(item));
             }
@@ -292,7 +312,7 @@ namespace TestFramework
                     {
                         Browser.Wait(TimeSpan.FromSeconds(waitTime));
                         i++;
-                        isAtOtherProductPage = Browser.webDriver.Title.Contains(item.ToString());
+                        isAtOtherProductPage = Browser.webDriver.Title.ToLower().Contains(item.ToString().ToLower());
                     } while (i < retryCount && !isAtOtherProductPage);
                     Browser.SwitchBack();
                 }
@@ -317,14 +337,20 @@ namespace TestFramework
         {
             var documentationPage = new DocumentationPage();
             bool isAtDocumentationPage = false;
-            bool canSwitchWindow = false;
-            canSwitchWindow = Browser.SwitchToNewWindow();
-            if (canSwitchWindow)
+            if (Browser.webDriver.WindowHandles.Count > 1)
+            {
+                bool canSwitchWindow = false;
+                canSwitchWindow = Browser.SwitchToNewWindow();
+                if (canSwitchWindow)
+                {
+                    isAtDocumentationPage = documentationPage.DocumentationTitle.ToLower().Contains(pageTitle.ToLower());
+                    Browser.SwitchBack();
+                }
+            }
+            else
             {
                 isAtDocumentationPage = documentationPage.DocumentationTitle.ToLower().Contains(pageTitle.ToLower());
-                Browser.SwitchBack();
             }
-
             Browser.GoBack();
             return isAtDocumentationPage;
         }

@@ -5,7 +5,7 @@ namespace TestFramework
 {
     public class FabricGettingStartedPage : BasePage
     {
-        [FindsBy(How = How.CssSelector, Using = "div#body-content div div div div.docs-PagesBannerLogo")]
+        [FindsBy(How = How.CssSelector, Using = "a#docs-PagesBannerLogo")]
         private IWebElement fabricPageTitle;
         public string FabricPageTitle
         {

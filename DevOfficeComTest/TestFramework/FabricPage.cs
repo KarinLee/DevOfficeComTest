@@ -5,7 +5,7 @@ namespace TestFramework
 {
     public class FabricPage : BasePage
     {
-        [FindsBy(How = How.CssSelector, Using = "div#body-content div div div")]
+        [FindsBy(How = How.XPath, Using = "//div[contains(@class,'Carousel-staticContent')]")]
         private IWebElement fabricPageTitle;
         public string FabricPageTitle
         {
