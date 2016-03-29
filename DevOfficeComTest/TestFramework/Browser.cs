@@ -42,7 +42,14 @@ namespace TestFramework
 
         public static void Goto(string url)
         {
-            webDriver.Navigate().GoToUrl(url);
+            try
+            {
+                webDriver.Navigate().GoToUrl(url);
+            }
+            catch (WebDriverTimeoutException)
+            {
+                webDriver.Navigate().Refresh();
+            }
             defaultTitle = Title;
         }
 
@@ -241,7 +248,14 @@ namespace TestFramework
 
         internal static void Click(IWebElement element)
         {
-            (webDriver as IJavaScriptExecutor).ExecuteScript("arguments[0].click();", element);
+            try
+            {
+                (webDriver as IJavaScriptExecutor).ExecuteScript("arguments[0].click();", element);
+            }
+            catch (WebDriverTimeoutException)
+            {
+                webDriver.Navigate().Refresh();
+            }
         }
 
         public static void SaveScreenShot(string fileName)
