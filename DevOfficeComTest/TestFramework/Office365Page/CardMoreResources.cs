@@ -49,7 +49,15 @@ namespace TestFramework.Office365Page
         public bool IsShowingCorrectResourcePage()
         {
             bool canSwitchWindow = Browser.SwitchToNewWindow();
-            bool isCorrectResourcePage = Browser.Title.Contains(resourceKeyword);
+            bool isCorrectResourcePage = false;
+            try
+            {
+                isCorrectResourcePage = Browser.Title.Contains(resourceKeyword);
+            }
+            catch (WebDriverTimeoutException)
+            {
+                Browser.webDriver.Navigate().Refresh();
+            }
             if (canSwitchWindow)
             {
                 Browser.SwitchBack();
