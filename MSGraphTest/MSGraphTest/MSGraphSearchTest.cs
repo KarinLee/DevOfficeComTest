@@ -37,20 +37,25 @@ namespace MSGraphTest
 
         #region Test cases
         [TestMethod]
-        public void BVT_Graph_Search_TC01_VerifyLocalDocsSearchService()
+        public void BVT_Graph_S08_TC01_VerifyLocalDocsSearchService()
         {
             foreach (string language in this.languages)
             {
                 string url = this.hostName + language + path;
-                JArray searchResult = this.GetRequestResult(url);
-                Assert.IsTrue(searchResult.Count > 0, "Search result didnt return any result", url);
+                GraphBrowser.Goto(url);
+                JArray searchResults = this.GetRequestResult(url);
+                Assert.IsTrue(searchResults.Count > 0, "Search result didnt return any result", url);
 
-                // get the url from the search result and invoke, to make sure that search links are workng fine
-                url = (string)searchResult[0]["Url"];
-                Assert.IsTrue(CheckUrl(this.hostName + url), "The url in search result is not valid");
+                foreach (var searchResult in searchResults)
+                {
+                    url = (string)searchResult["Url"];
+                    Assert.IsTrue(url.StartsWith(language), "The searched results should be culture-specific");
+                    // get the url from the search result and invoke, to make sure that search links are workng fine
+                    Assert.IsTrue(CheckUrl(this.hostName + url), "The url in search result is not valid");
+                }
             }
         }
-         #endregion
+        #endregion
 
         private bool CheckUrl(string url)
         {
@@ -75,7 +80,7 @@ namespace MSGraphTest
                 Assert.IsTrue(response.IsSuccessStatusCode, "service didnt return success", url);
                 var resMsg = response.Content.ReadAsStringAsync().Result;
 
-                data =(JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(resMsg);
+                data = (JArray)Newtonsoft.Json.JsonConvert.DeserializeObject(resMsg);
             }
             return data;
         }

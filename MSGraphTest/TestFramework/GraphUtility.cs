@@ -367,7 +367,7 @@ namespace TestFramework
             string subJsonString = jsonString.Substring(propertyValueStartIndex);
             int propertyValueEndIndex;
             propertyValueEndIndex = subJsonString.IndexOf("\"\"");
-            
+
             return subJsonString.Substring(1, propertyValueEndIndex - 1);
         }
 
@@ -571,6 +571,38 @@ namespace TestFramework
             string restPart = GraphBrowser.Url.Substring(url.IndexOf("://") + 3);
             string lcnName = restPart.Split('/')[1];
             return lcnName;
+        }
+
+        /// <summary>
+        /// Try to find a cooperation note on Chinese Explorer page.
+        /// </summary>
+        /// <returns>True if found, else no.</returns>
+        public static bool FindCHNExplorerNote()
+        {
+            var noteElement = GraphBrowser.FindElement(By.XPath("//div[contains(text(),'Note: This Graph Explorer works with the sovereign cloud deployment operated by 21Vianet in China.')]"));
+            return (noteElement != null);
+        }
+
+        /// <summary>
+        /// Verify whether the requests on Chinese Explorer page are valid
+        /// </summary>
+        /// <param name="incorrectRequest">The invalid request (if any) for chinese endpoint</param>
+        /// <returns>True if all requests are valid, else false.</returns>
+        public static bool VerifyExplorerRequestListOnCHNEndpoint(out string incorrectRequest)
+        {
+            incorrectRequest = string.Empty;
+            var requestCount = GraphBrowser.webDriver.FindElements(By.CssSelector("datalist#requestList>option")).Count;
+            for (int i = 0; i < requestCount;i++)
+            {
+                var requestOption = GraphBrowser.webDriver.FindElements(By.CssSelector("datalist#requestList>option"))[i];
+                string request=requestOption.GetAttribute("value");
+                if (!request.StartsWith("https://microsoftgraph.chinacloudapi.cn/"))
+                {
+                    incorrectRequest = request;
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

@@ -234,5 +234,32 @@ namespace MSGraphTest
                 getResponse.Contains("Request_ResourceNotFound"),
                 "The group should be deleted successfully");
         }
+
+        /// <summary>
+        /// Verify whether there is a cooperation note should exist on Chinese explorer page.
+        /// </summary>
+        [TestMethod]
+        public void Comps_Graph_S05_TC06_CanFindNoteOnChineseExplorerPage()
+        {
+            GraphBrowser.Goto("http://graph.microsoft.io/zh-cn");
+            TestHelper.VerifyAndSelectExplorerOnNavBar();
+            bool isFound = GraphUtility.FindCHNExplorerNote();
+            Assert.IsTrue(isFound, "A cooperation note should exist on Chinese explorer page");
+        }
+        
+        /// <summary>
+        /// Verify whether the request list on Chinese explorer page is valid.
+        /// </summary>
+        [TestMethod]
+        public void Comps_Graph_S05_TC07_IsRequestListValidForChinaEndpoint()
+        {
+            GraphBrowser.Goto("http://graph.microsoft.io/zh-cn");
+            TestHelper.VerifyAndSelectExplorerOnNavBar();
+            string incorrectRequest;
+            bool isValid = GraphUtility.VerifyExplorerRequestListOnCHNEndpoint(out incorrectRequest);
+            Assert.IsTrue(isValid,
+                "{0} is incorrect on Chinese Explorer page",
+                isValid ? "No request" : incorrectRequest);
+        }
     }
 }

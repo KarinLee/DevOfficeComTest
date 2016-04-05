@@ -23,6 +23,12 @@ namespace MSGraphTest
         {
             GraphBrowser.Close();
         }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            GraphBrowser.Goto(GraphBrowser.BaseAddress);
+        }
         #endregion
 
         /// <summary>
@@ -47,8 +53,21 @@ namespace MSGraphTest
             }
             else
             {
-                Assert.IsTrue(disallowed, "The site should not be allowed to accessby search engines");
+                Assert.Inconclusive("The test site is not the production site.");
             }
+        }
+
+        [TestMethod]
+        public void BVT_Graph_S06_TC02_CanGoToLanguageSpecificExplorerPage()
+        {
+            //Goto product site, get the current language
+            GraphBrowser.Goto("http://graph.microsoft.io");
+            string homePageLanguage = GraphBrowser.Url.Replace("http://graph.microsoft.io/", "");
+            GraphBrowser.Goto("https://graph.microsoft.io/graph-explorer");
+            string explorerLanguage = GraphBrowser.Url.Replace("https://graph.microsoft.io/", "").Replace("graph-explorer", "");
+            Assert.AreEqual(homePageLanguage,
+                explorerLanguage,
+                "Graph explorer neutral URL should redirect to language specific page");
         }
     }
 }
