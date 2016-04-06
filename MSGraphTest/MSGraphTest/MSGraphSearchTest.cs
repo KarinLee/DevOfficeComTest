@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestFramework;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 
 namespace MSGraphTest
 {
@@ -52,6 +53,31 @@ namespace MSGraphTest
                     Assert.IsTrue(url.StartsWith(language), "The searched results should be culture-specific");
                     // get the url from the search result and invoke, to make sure that search links are workng fine
                     Assert.IsTrue(CheckUrl(this.hostName + url), "The url in search result is not valid");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Verify whether input of the search keyword on Home page can get the correct results
+        /// </summary>
+        [TestMethod]
+        public void BVT_Graph_S08_TC02_CanSearchLocalDocs()
+        {
+            foreach (string language in this.languages)
+            {
+                GraphBrowser.Goto(this.hostName + language);
+                List<SearchedResult> searchResults = GraphUtility.SearchText("Authorization");
+                if (searchResults.Count == 0)
+                {
+                    Assert.Inconclusive("Search on {0} didn't return any result", this.hostName + language);
+                }
+
+                foreach (var searchResult in searchResults)
+                {
+                    string docLink = (string)searchResult.DetailLink;
+                    Assert.IsTrue(docLink.StartsWith(this.hostName + language), "The searched results should be culture-specific");
+                    // get the url from the search result and invoke, to make sure that search links are workng fine
+                    Assert.IsTrue(CheckUrl(docLink), "The url in search result is not valid");
                 }
             }
         }

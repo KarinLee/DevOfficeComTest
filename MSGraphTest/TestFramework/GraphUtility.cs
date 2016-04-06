@@ -592,10 +592,10 @@ namespace TestFramework
         {
             incorrectRequest = string.Empty;
             var requestCount = GraphBrowser.webDriver.FindElements(By.CssSelector("datalist#requestList>option")).Count;
-            for (int i = 0; i < requestCount;i++)
+            for (int i = 0; i < requestCount; i++)
             {
                 var requestOption = GraphBrowser.webDriver.FindElements(By.CssSelector("datalist#requestList>option"))[i];
-                string request=requestOption.GetAttribute("value");
+                string request = requestOption.GetAttribute("value");
                 if (!request.StartsWith("https://microsoftgraph.chinacloudapi.cn/"))
                 {
                     incorrectRequest = request;
@@ -603,6 +603,29 @@ namespace TestFramework
                 }
             }
             return true;
+        }
+
+        public static List<SearchedResult> SearchText(string keyWord)
+        {
+            List<SearchedResult> searchedResults = new List<SearchedResult>();
+
+            var element = GraphBrowser.FindElement(By.CssSelector("input#q"));
+            element.Clear();
+            element.SendKeys(keyWord);
+            var searchButton = GraphBrowser.FindElement(By.XPath("//button[text()='Search']"));
+            GraphBrowser.Click(searchButton);
+
+            GraphBrowser.Wait(By.CssSelector("ul#local-docs-ul>li"));
+            int resultCount = GraphBrowser.webDriver.FindElements(By.CssSelector("ul#local-docs-ul>li")).Count;
+            for (int i = 0; i < resultCount; i++)
+            {
+                SearchedResult result = new SearchedResult();
+                result.Name = GraphBrowser.webDriver.FindElement(By.CssSelector("ul#local-docs-ul>li:nth-child(" + (int)(i + 2) + ")>div > div.event-info > div > div.col-xs-8.name.cp1")).Text;
+                result.Description = GraphBrowser.webDriver.FindElement(By.CssSelector("ul#local-docs-ul>li:nth-child(" + (int)(i + 2) + ")> div > div> div.desc")).Text;
+                result.DetailLink = GraphBrowser.webDriver.FindElement(By.CssSelector("ul#local-docs-ul>li:nth-child(" + (int)(i + 2) + ") > div > div.event-info > div > div.col-xs-8.event-links > a")).GetAttribute("href");
+                searchedResults.Add(result);
+            }
+            return searchedResults;
         }
     }
 }
