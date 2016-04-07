@@ -84,7 +84,7 @@ namespace TestFramework.OfficeAddInPage
             foreach (IWebElement item in elements)
             {
                 string Url = item.GetAttribute("src");
-                if (!Utility.ImageExist(Url))
+                if (!Utility.FileExist(Url))
                 {
                     return false;
                 }

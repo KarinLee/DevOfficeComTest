@@ -1,11 +1,10 @@
 ﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Interactions;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TestFramework
 {
@@ -257,7 +256,7 @@ namespace TestFramework
         /// </summary>
         /// <param name="Url">The image url</param>
         /// <returns>True if yes, else no</returns>
-        public static bool ImageExist(string Url)
+        public static bool FileExist(string Url)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Url);
             request.Timeout = 15000;
@@ -273,6 +272,46 @@ namespace TestFramework
             catch (Exception)
             {
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Verify if the mobile menu-content is found on the page
+        /// </summary>
+        /// <returns>Trye if yes, else no.</returns>
+        public static bool IsMobileMenuContentDisplayed()
+        {
+            return Browser.FindElement(By.CssSelector("div.ms-Panel-main")).Displayed;
+        }
+
+        /// <summary>
+        /// Verify if the toggle menu icon is found on the page 
+        /// </summary>
+        /// <returns>Trye if yes, else no.</returns>
+        public static bool IsToggleMenuDisplayed()
+        {
+            return Browser.FindElement(By.CssSelector("div.docs-MobileNav-menuButton")).Displayed;
+        }
+
+        /// <summary>
+        /// Execute the mobile menu display toggle
+        /// </summary>
+        public static void ToggleMobileMenu()
+        {
+            var element = Browser.FindElement(By.CssSelector("div.docs-MobileNav-menuButton"));
+            var panelElement = Browser.FindElement(By.CssSelector("div.ms-Panel-main"));
+            if (element.Displayed && !panelElement.Displayed)
+            {
+                Browser.Click(element);
+                Browser.Wait(TimeSpan.FromSeconds(2));
+            }
+            else{
+                //Click at any position outside the menu to hide it
+                Actions action = new Actions(Browser.webDriver);
+                int offX = panelElement.Location.X + panelElement.Size.Width + 50;
+                int offY=panelElement.Location.Y + panelElement.Size.Height / 2;
+                action.MoveByOffset(offX,offY);
+                action.Click().Build().Perform();
             }
         }
 

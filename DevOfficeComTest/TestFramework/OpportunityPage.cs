@@ -15,7 +15,7 @@ namespace TestFramework
             IWebElement element = Browser.Driver.FindElement(By.CssSelector("#carousel>div>div"));
             string Url = element.GetAttribute("style");
             Url = Browser.BaseAddress + Url.Substring(Url.IndexOf('/'), Url.LastIndexOf('"') - Url.IndexOf('/'));
-            return Utility.ImageExist(Url);
+            return Utility.FileExist(Url);
         }
 		public bool isAt()
 		{
