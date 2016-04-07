@@ -241,10 +241,10 @@ namespace MSGraphTest
         [TestMethod]
         public void Comps_Graph_S05_TC06_CanFindNoteOnChineseExplorerPage()
         {
-            GraphBrowser.Goto("http://graph.microsoft.io/zh-cn");
+            GraphBrowser.Goto(GraphUtility.RemoveRedundantPartsfromExtractBaseAddress()+"/zh-cn");
             TestHelper.VerifyAndSelectExplorerOnNavBar();
             bool isFound = GraphUtility.FindCHNExplorerNote();
-            Assert.IsTrue(isFound, "A cooperation note should exist on Chinese explorer page");
+            Assert.IsTrue(isFound, "A graph explorer note for China should exist at the bottom of the page");
         }
         
         /// <summary>
@@ -253,7 +253,7 @@ namespace MSGraphTest
         [TestMethod]
         public void Comps_Graph_S05_TC07_IsRequestListValidForChinaEndpoint()
         {
-            GraphBrowser.Goto("http://graph.microsoft.io/zh-cn");
+            GraphBrowser.Goto(GraphUtility.RemoveRedundantPartsfromExtractBaseAddress() + "/zh-cn");
             TestHelper.VerifyAndSelectExplorerOnNavBar();
             string incorrectRequest;
             bool isValid = GraphUtility.VerifyExplorerRequestListOnCHNEndpoint(out incorrectRequest);

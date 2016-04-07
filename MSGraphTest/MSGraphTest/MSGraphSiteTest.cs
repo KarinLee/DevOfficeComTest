@@ -53,18 +53,22 @@ namespace MSGraphTest
             }
             else
             {
-                Assert.Inconclusive("The test site is not the production site.");
+                Assert.IsTrue(disallowed, "The site should not be allowed to accessby search engines");
             }
         }
 
+        /// <summary>
+        /// Verify whether Graph explorer neutral URL redirects to language specific page
+        /// </summary>
         [TestMethod]
         public void BVT_Graph_S06_TC02_CanGoToLanguageSpecificExplorerPage()
         {
             //Goto product site, get the current language
-            GraphBrowser.Goto("http://graph.microsoft.io");
-            string homePageLanguage = GraphBrowser.Url.Replace("http://graph.microsoft.io/", "");
-            GraphBrowser.Goto("https://graph.microsoft.io/graph-explorer");
-            string explorerLanguage = GraphBrowser.Url.Replace("https://graph.microsoft.io/", "").Replace("graph-explorer", "");
+            //GraphBrowser.Goto("http://graph.microsoft.io");
+            string homePageLanguage = GraphBrowser.Url.Replace(GraphBrowser.BaseAddress, "");
+            string prefix = GraphUtility.RemoveRedundantPartsfromExtractBaseAddress();
+            GraphBrowser.Goto(prefix+"/graph-explorer");
+            string explorerLanguage = GraphBrowser.Url.Replace("https:","http:").Replace(prefix, "").Replace("graph-explorer", "");
             Assert.AreEqual(homePageLanguage,
                 explorerLanguage,
                 "Graph explorer neutral URL should redirect to language specific page");

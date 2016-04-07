@@ -52,7 +52,7 @@ namespace MSGraphTest
                     url = (string)searchResult["Url"];
                     Assert.IsTrue(url.StartsWith(language), "The searched results should be culture-specific");
                     // get the url from the search result and invoke, to make sure that search links are workng fine
-                    Assert.IsTrue(CheckUrl(this.hostName + url), "The url in search result is not valid");
+                    Assert.IsTrue(GraphUtility.CheckUrl(this.hostName + url), "The url in search result is not valid");
                 }
             }
         }
@@ -77,24 +77,12 @@ namespace MSGraphTest
                     string docLink = (string)searchResult.DetailLink;
                     Assert.IsTrue(docLink.StartsWith(this.hostName + language), "The searched results should be culture-specific");
                     // get the url from the search result and invoke, to make sure that search links are workng fine
-                    Assert.IsTrue(CheckUrl(docLink), "The url in search result is not valid");
+                    Assert.IsTrue(GraphUtility.CheckUrl(docLink), "The url in search result is not valid");
                 }
             }
         }
         #endregion
 
-        private bool CheckUrl(string url)
-        {
-            bool success = false;
-            using (var client = new HttpClient())
-            {
-                var request = new HttpRequestMessage(HttpMethod.Get, url);
-                var response = client.SendAsync(request).Result;
-                string content = response.Content.ReadAsStringAsync().Result;
-                success = !content.Contains("NotFound.htm");
-            }
-            return success;
-        }
         private Newtonsoft.Json.Linq.JArray GetRequestResult(string url)
         {
             JArray data = new JArray();

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Net;
 using System.Text;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 
 namespace TestFramework
@@ -626,6 +627,19 @@ namespace TestFramework
                 searchedResults.Add(result);
             }
             return searchedResults;
+        }
+
+        public static bool CheckUrl(string url)
+        {
+            bool success = false;
+            using (var client = new HttpClient())
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, url);
+                var response = client.SendAsync(request).Result;
+                string content = response.Content.ReadAsStringAsync().Result;
+                success = !content.Contains("NotFound.htm");
+            }
+            return success;
         }
     }
 }
