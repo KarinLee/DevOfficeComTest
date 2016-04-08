@@ -122,5 +122,23 @@ namespace TestFramework.OfficeAddInPage
                 }
             }
         }
+
+        /// <summary>
+        /// Choose development tool to build the add-in.
+        /// </summary>
+        /// <param name="selectVS">True if to select Visual Studio, else to choose Other tools</param>
+        public void SelectBuildTool(bool selectVS = false)
+        {
+            if (selectVS)
+            {
+                var element = Browser.FindElement(By.CssSelector("button#button-visualstudio"));
+                Browser.Click(element);
+            }
+            else
+            {
+                var element = Browser.FindElement(By.CssSelector("button#button-othertools"));
+                Browser.Click(element);
+            }
+        }
     }
 }

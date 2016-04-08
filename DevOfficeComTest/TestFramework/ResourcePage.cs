@@ -65,35 +65,17 @@ namespace TestFramework
             Browser.SetWaitTime(TimeSpan.FromSeconds(5));
             try
             {
-                var bannerImage = Browser.Driver.FindElement(By.Id("banner-image"));
-                if (bannerImage.FindElement(By.CssSelector("div")).GetAttribute("class") == "no-description-banner-contents")
-                {
-                    resourceName = bannerImage.FindElement(By.CssSelector("div>div>h2"));
-                }
-                else
-                {
-                    resourceName = bannerImage.FindElement(By.CssSelector("div>div>div>h2"));
-                }
+                resourceName = Browser.webDriver.FindElement(By.CssSelector("div.banner-text>h1"));
             }
             catch (NoSuchElementException)
             {
-                var container = Browser.Driver.FindElement(By.CssSelector("div.zone.zone-content"));
-                foreach (IWebElement article in container.FindElements(By.TagName("article")))
+                resourceName = Browser.FindElement(By.CssSelector("div.banner-text>h2"));
+                if (resourceName==null)
                 {
-                    if (article.GetAttribute("class") == "widget-HighlightsWidget widget-content widget-highlights-widget widget")
-                    {
-                        resourceName = article.FindElement(By.CssSelector("div>div>div>h1"));
-                        break;
-                    }
-
-                    if (article.GetAttribute("class") == "widget-AppRegistrationWidget widget-content widget-app-registration-widget widget")
-                    {
-                        resourceName = article.FindElement(By.CssSelector("div#register-app.card>h1"));
-                        break;
-                    }
+                    //For Office 365 app registration tool
+                    resourceName = Browser.FindElement(By.CssSelector("div#register-app > h1"));
                 }
             }
-
             resourceTitle = resourceName.Text;
             Browser.SetWaitTime(TimeSpan.FromSeconds(Utility.DefaultWaitTime));
         }

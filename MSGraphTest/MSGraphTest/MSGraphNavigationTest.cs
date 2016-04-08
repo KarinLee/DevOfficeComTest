@@ -34,7 +34,7 @@ namespace MSGraphTest
         [TestMethod]
         public void BVT_Graph_S01_TC01_CanBrandingNavToHomePage()
         {
-            string title = GraphPages.Navigation.Select("Home");
+            GraphPages.Navigation.Select("Home");
             //Currently ignore the Graph explorer, since this page desn't have Microsoft
             //Graph branding image
             string[] navOptions = new string[] { 
@@ -51,7 +51,7 @@ namespace MSGraphTest
             GraphUtility.ClickBranding();
 
             Assert.IsTrue(
-                GraphPages.Navigation.IsAtGraphPage(title),
+                GraphPages.Navigation.IsAtGraphPage("Home"),
                 @"Clicking the branding image should navigate to Graph Home Page");
         }
 
@@ -87,9 +87,9 @@ namespace MSGraphTest
         [TestMethod]
         public void BVT_Graph_S01_TC04_CanGoToGraphExplorerPage()
         {
-            GraphPages.Navigation.Select("Graph explorer");
+            string title = TestHelper.VerifyAndSelectExplorerOnNavBar();
             Assert.IsTrue(
-                GraphPages.Navigation.IsAtGraphPage("Graph Explorer"),
+                GraphPages.Navigation.IsAtGraphPage(title),
                 @"The opened page should be ""Graph explorer""");
         }
 
@@ -164,7 +164,7 @@ namespace MSGraphTest
             //Currently ignore Graph explorer and Documentation, since these pages don't have banner image
             //Graph branding image
             string[] navOptions = new string[] {
-                "Home",
+                //"Home",
                 "Get started", 
                 //"Documentation", 
                 //"Graph explorer", 

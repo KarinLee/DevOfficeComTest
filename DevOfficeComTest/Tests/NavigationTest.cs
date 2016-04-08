@@ -57,7 +57,12 @@ namespace Tests
                         Assert.IsTrue(Pages.Navigation.IsAtResourcePage(item), string.Format("The menu item {0} is not opened currectly.", item.ToString()));
                         Browser.SetWaitTime(TimeSpan.FromSeconds(Utility.DefaultWaitTime));
                         break;
-                    default:
+					case (MenuItemOfResource.MiniLabs):
+                        Browser.SetWaitTime(TimeSpan.FromSeconds(30));
+                        Pages.Navigation.Select("Resources", item.ToString());
+						Assert.IsTrue(Browser.Title == "Office Dev Center - mini-labs");
+						break;
+					default:
                         Pages.Navigation.Select("Resources", item.ToString());
                         //Browser.Wait(TimeSpan.FromSeconds(10));
                         Assert.IsTrue(Pages.Navigation.IsAtResourcePage(item), string.Format("The menu item {0} is not opened currectly.", item.ToString()));

@@ -100,7 +100,7 @@ namespace TestFramework
             foreach (var winHandler in handlers)
             {
                 webDriver.SwitchTo().Window(winHandler);
-                if (webDriver.Title.Contains(title))
+                if (webDriver.Title.ToLower().Contains(title.ToLower()))
                 {
                     return true;
                 }
@@ -262,18 +262,18 @@ namespace TestFramework
 
         static GraphBrowser()
         {
-            switch (GraphUtility.GetConfigurationValue("Browser"))
+            switch (GraphUtility.GetConfigurationValue("Browser").ToLower())
             {
-                case ("Chrome"):
+                case ("chrome"):
                     webDriver = new ChromeDriver(System.IO.Directory.GetCurrentDirectory() + @"/Drivers/");
                     break;
-                case ("IE32"):
+                case ("ie32"):
                     webDriver = new InternetExplorerDriver(System.IO.Directory.GetCurrentDirectory() + @"/Drivers/IE32/");
                     break;
-                case ("IE64"):
-                    webDriver = new InternetExplorerDriver(System.IO.Directory.GetCurrentDirectory() + @"/Drivers/IE64/");
+                case ("ie64"):
+                    webDriver = new InternetExplorerDriver(System.IO.Directory.GetCurrentDirectory() + @"/Drivers/IE64/", new InternetExplorerOptions() {RequireWindowFocus = true });
                     break;
-                case ("Firefox"):
+                case ("firefox"):
                 default:
                     webDriver = new FirefoxDriver();
                     break;
@@ -360,6 +360,22 @@ namespace TestFramework
                 element = GraphBrowser.FindElement(By.CssSelector("#jsonViewer > div.ace_scroller > div > div.ace_layer.ace_text-layer > div.ace_line"));
                 i++;
             } while (i < retryCount && element.Text.Equals(string.Empty));
+        }
+
+        public static bool SwitchBack()
+        {
+            string currentHandle = webDriver.CurrentWindowHandle;
+            if (!currentHandle.Equals(defaultHandle))
+            {
+                webDriver.Close();
+                webDriver.SwitchTo().Window(defaultHandle);
+                return true;
+            }
+            else
+            {
+                webDriver.SwitchTo().DefaultContent();
+                return false;
+            }
         }
     }
 }

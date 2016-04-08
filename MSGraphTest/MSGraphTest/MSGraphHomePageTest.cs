@@ -34,7 +34,7 @@ namespace MSGraphTest
         [TestMethod]
         public void BVT_Graph_S02_TC01_CanGoToHomePage()
         {
-            string title=GraphPages.Navigation.Select("Home");
+            string title = GraphPages.Navigation.Select("Home");
             Assert.IsTrue(
                 GraphPages.Navigation.IsAtGraphPage(title),
                 @"The opened page should be {0} when clicking it",
@@ -83,10 +83,15 @@ namespace MSGraphTest
         [TestMethod]
         public void Acceptance_Graph_S02_TC03_ClickTryAPIOnExplorerCanShowPage()
         {
+            string explorerTitle = TestHelper.VerifyAndSelectExplorerOnNavBar();
+            GraphBrowser.GoBack();
+
             GraphUtility.SelectToTryAPI();
             Assert.IsTrue(
-                GraphBrowser.SwitchToWindow("Graph Explorer"),
-                @"The opened page should be ""Graph explorer"" when clicking Try the API");
+                GraphBrowser.SwitchToWindow(explorerTitle),
+                @"The opened page should be ""{0}"" when clicking Try the API",
+                explorerTitle);
+            GraphBrowser.SwitchBack();
         }
     }
 }

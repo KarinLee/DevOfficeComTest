@@ -16,6 +16,7 @@ namespace TestFramework
         internal static IWebDriver webDriver;
         static string defaultTitle;
         static string defaultHandle;
+        internal static string homeTitle;
 
         public static string BaseAddress
         {
@@ -36,11 +37,19 @@ namespace TestFramework
             }
             webDriver.Navigate().GoToUrl(address);
             defaultTitle = Title;
+            homeTitle = Title;
         }
 
         public static void Goto(string url)
         {
-            webDriver.Navigate().GoToUrl(url);
+            try
+            {
+                webDriver.Navigate().GoToUrl(url);
+            }
+            catch (WebDriverTimeoutException)
+            {
+                webDriver.Navigate().Refresh();
+            }
             defaultTitle = Title;
         }
 
@@ -239,7 +248,14 @@ namespace TestFramework
 
         internal static void Click(IWebElement element)
         {
-            (webDriver as IJavaScriptExecutor).ExecuteScript("arguments[0].click();", element);
+            try
+            {
+                (webDriver as IJavaScriptExecutor).ExecuteScript("arguments[0].click();", element);
+            }
+            catch (WebDriverTimeoutException)
+            {
+                webDriver.Navigate().Refresh();
+            }
         }
 
         public static void SaveScreenShot(string fileName)
@@ -347,6 +363,7 @@ namespace TestFramework
                 case "RSS":
                     if (webDriver.Url.Contains("feedburner.com/office/fmNx"))
                     {
+                        SwitchBack();
                         return true;
                     }
                     break;

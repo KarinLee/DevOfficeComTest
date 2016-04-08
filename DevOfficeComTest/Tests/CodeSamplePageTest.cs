@@ -786,18 +786,20 @@ namespace Tests
             Assert.IsTrue(hasFounded, "There should be at least one sample which meets the filter SharePoint Workflow");
         }
 
+        // Don't have any result for Console Application platform filter now. Comment out this case for now.
         /// <summary>
         /// Verify if choosing the filter Console application can get any correct sample. 
         /// </summary>
-        [TestMethod]
-        public void Comps_S13_TC34_CanFindVideoPortalSamples()
-        {
-            Utility.SelectFilter("Console application");
-            List<SearchedResult> resultList = Utility.GetFilterResults();
-
-            //The specific sample Office Dev P&P: OneDrive Provisioning contains Console application part
-            Assert.IsTrue(resultList[0].Name.Equals("Office Dev P&P: OneDrive Provisioning"), "There should be at least one sample which meets the filter Console application");
-        }
+        //[TestMethod]
+        //public void Comps_S13_TC34_CanFindVideoPortalSamples()
+        //{
+        //    Utility.SelectFilter("Console application");
+        //    List<SearchedResult> resultList = Utility.GetFilterResults();
+        //    if (resultList.Count==0)
+        //    {
+        //        Assert.Inconclusive("Currently there are no code samples for Console application filter");
+        //    }
+        //}
 
         /// <summary>
         /// Verify if choosing the filter Web can get any correct sample. 

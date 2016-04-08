@@ -17,7 +17,7 @@ namespace TestFramework
         /// <summary>
         /// Some typical search text
         /// </summary>
-        public static readonly string[] TypicalSearchText = new string[] { "API", "SharePoint", "Add-in", "Graph", "ios", "OneDrive" };
+        public static readonly string[] TypicalSearchText = new string[] { "SharePoint", "Add-in", "Graph", "ios", "OneDrive" };
 
         public static readonly int MinWidthToShowParam = 895;
 

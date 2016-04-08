@@ -110,6 +110,7 @@ namespace MSGraphTest
             GraphBrowser.GetWindowSize(out actualWidth, out actualHeight);
             if (GraphUtility.IsToggleArrowDisplayed())
             {
+                GraphBrowser.SetWindowSize(currentWidth, currentHeight);
                 Assert.Inconclusive(
                     "A window size ({0}*{1}) is not big enough to hide table of content arrow",
                     actualWidth,

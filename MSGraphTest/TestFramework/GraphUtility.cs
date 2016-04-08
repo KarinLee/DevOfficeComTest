@@ -354,22 +354,21 @@ namespace TestFramework
         }
 
         /// <summary>
-        /// Parse a string of simple JSON format, which means no composed properties
+        /// Get a specific property from the response
         /// </summary>
-        /// <param name="jsonString">The string to parse</param>
-        /// <returns>A dictionary contains properties' keys and values</returns>
-        public static Dictionary<string, string> ParseJsonFormatProperties(string jsonString)
+        /// <param name="jsonString">The response string</param>
+        /// <param name="propertyName">The property's name</param>
+        /// <returns>The property's value</returns>
+        public static string GetProperty(string jsonString, string propertyName)
         {
-            string[] meProperties = jsonString.Split(',');
-
-            Dictionary<string, string> dictionary = new Dictionary<string, string>();
-            foreach (string property in meProperties)
-            {
-                string propertyName = property.Split(':')[0].Replace("\"", "");
-                //3 for the length of "":
-                dictionary.Add(propertyName, property.Substring(propertyName.Length + 3).Replace("\"", ""));
-            }
-            return dictionary;
+            int propertyNameIndex = jsonString.IndexOf("\"" + propertyName + "\"");
+            int propertyValueStartIndex;
+            propertyValueStartIndex = propertyNameIndex + propertyName.Length + 2;
+            string subJsonString = jsonString.Substring(propertyValueStartIndex);
+            int propertyValueEndIndex;
+            propertyValueEndIndex = subJsonString.IndexOf("\"\"");
+            
+            return subJsonString.Substring(1, propertyValueEndIndex - 1);
         }
 
         public static void SelectO365AppRegisstration()
@@ -411,15 +410,21 @@ namespace TestFramework
             return false;
         }
 
+        /// <summary>
+        /// Select "See OverView" on Home page
+        /// </summary>
         public static void SelectToSeeOverView()
         {
             var element = GraphBrowser.FindElement(By.XPath("//div/a[contains(@href,'/docs')]"));
             GraphBrowser.Click(element);
         }
 
+        /// <summary>
+        /// Select "Try the API" on Home page
+        /// </summary>
         public static void SelectToTryAPI()
         {
-            var element = GraphBrowser.FindElement(By.XPath("//div/a[contains(@href,'graphexplorer2.azurewebsites.net')]"));
+            var element = GraphBrowser.FindElement(By.XPath("//div/a[contains(@href,'graph-explorer')]"));
             GraphBrowser.Click(element);
         }
 
@@ -514,12 +519,14 @@ namespace TestFramework
 
         public static void ClickLogin()
         {
+            GraphBrowser.Wait(By.XPath("//a[@ng-click='login()']"));
             var element = GraphBrowser.FindElement(By.XPath("//a[@ng-click='login()']"));
             GraphBrowser.Click(element);
         }
 
         public static void ClickLogout()
         {
+            GraphBrowser.Wait(By.XPath("//a[@ng-click='logout()']"));
             var element = GraphBrowser.FindElement(By.XPath("//a[@ng-click='logout()']"));
             GraphBrowser.Click(element);
         }

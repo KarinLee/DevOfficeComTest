@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TestConfig>
+<Property key="StartTime" value="XX:XX"/>
+<Property key="TimeZone" value="Pacific Standard Time"/>
+  <Property key="SMTPServerHost" value="XXXXXXXX"/>
+  <Property key="SMTPUser" value="XXXXXX"/>
+  <Property key="SMTPPassword" value="XXXXXX"/>
+  <Property key="FromAddress" value="XXXX@XXXX.com"/>
+  <Property key="Domain" value="XXXXX"/>
+  <Property key="ToAddresses" value="XXXX;XXXX"/>
+</TestConfig>
