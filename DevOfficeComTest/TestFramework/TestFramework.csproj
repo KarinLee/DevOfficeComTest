@@ -87,6 +87,7 @@
     <Compile Include="ProductPage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResourcePage.cs" />
+    <Compile Include="SkypePage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

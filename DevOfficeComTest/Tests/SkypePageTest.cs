@@ -1,15 +1,17 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
+using System.Text;
+using System.Collections.Generic;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Drawing;
 using TestFramework;
 
 namespace Tests
 {
     /// <summary>
-    /// Test for Fabric Page
+    /// Summary description for SkypePageTest
     /// </summary>
     [TestClass]
-    public class FabricPageTest
+    public class SkypePageTest
     {
         #region Additional test attributes
         [ClassInitialize()]
@@ -27,62 +29,74 @@ namespace Tests
         [TestCleanup()]
         public void TestCleanup()
         {
-            Browser.Goto(Utility.GetConfigurationValue("BaseAddress"));
+            //Browser.Goto(Utility.GetConfigurationValue("BaseAddress"));
+            Browser.SwitchBack();
         }
-
         #endregion
 
         /// <summary>
-        /// Verify whether select one item on Fabric page's own top nav bar can switch the correct page
+        /// Verify whether select one item on Skype page's own top nav bar can switch the correct page
         /// </summary>
         [TestMethod]
-        public void BVT_S16_TC01_CanNaviThroughMenu()
+        public void BVT_S17_TC01_CanNavThroughSkypeMenu()
         {
-            Pages.Navigation.Select("Explore", MenuItemOfExplore.OfficeUIFabric.ToString());
-            Browser.SetWindowSize(0, 0, true);
-            foreach (FabricNavItem item in Enum.GetValues(typeof(FabricNavItem)))
+            //int currentWidth = 0;
+            //int currentHeight = 0;
+            //Browser.GetWindowSize(out currentWidth, out currentHeight);
+            //Browser.SetWindowSize(0, 0, true);
+            Browser.GotoSkypePage();
+            
+            foreach (SkypeNavItem item in Enum.GetValues(typeof(SkypeNavItem)))
             {
-                FabricPage page = new FabricPage();
+                SkypePage page = new SkypePage();
                 page.SelectTopNavItem(item);
                 Assert.IsTrue(page.CanSwitchCorrectPage(item),
                     "Select {0} should navigate to the correct page",
                     EnumExtension.GetDescription(item));
             }
+            ////Recover the window size
+            //Browser.SetWindowSize(currentWidth, currentHeight);
         }
 
         /// <summary>
         /// Verify whether select any nav link on the left can refer to the correct doc part
         /// </summary>
         [TestMethod]
-        public void BVT_S16_TC02_CanLeftNavWork()
+        public void BVT_S17_TC02_CanLeftNavWork()
         {
-            Pages.Navigation.Select("Explore", MenuItemOfExplore.OfficeUIFabric.ToString());
-            Browser.SetWindowSize(0, 0, true);
-            Array items = Enum.GetValues(typeof(FabricNavItem));
+            //int currentWidth = 0;
+            //int currentHeight = 0;
+            //Browser.GetWindowSize(out currentWidth, out currentHeight); 
+            //Browser.SetWindowSize(0, 0, true);
+            Browser.GotoSkypePage();
+
+            Array items = Enum.GetValues(typeof(SkypeNavItem));
             int randomIndex;
-            FabricPage page = new FabricPage();
-            //Overview and Blog don't have left nav items
+            SkypePage page = new SkypePage();
+            //Overview and Marketplace don't have left nav items
             randomIndex = new Random().Next(1, items.Length - 1);
-            page.SelectTopNavItem((FabricNavItem)items.GetValue(randomIndex));
+            page.SelectTopNavItem((SkypeNavItem)items.GetValue(randomIndex));
 
             randomIndex = new Random().Next(page.LeftNavItems.Count);
             string itemName;
             Assert.IsTrue(page.IsValidLeftNavItem(randomIndex, out itemName),
                 "Click {0} should refer to the related doc part.",
                 itemName);
+            ////Recover the window size
+            //Browser.SetWindowSize(currentWidth, currentHeight);
         }
 
         /// <summary>
         /// Verify whether there is a toggle arrow which work correctly when the window is small.
         /// </summary>
         [TestMethod]
-        public void Comps_S16_TC03_CanToggleArrowWorkInSmallFabricPage()
+        public void Comps_S17_TC03_CanToggleArrowWorkInSmallSkypePage()
         {
+            Browser.GotoSkypePage();
+
             int currentWidth = 0;
             int currentHeight = 0;
             Browser.GetWindowSize(out currentWidth, out currentHeight);
-            Pages.Navigation.Select("Explore", MenuItemOfExplore.OfficeUIFabric.ToString());
-            
             Size windowSize;
             //Set as the screen size of IPad2
             double deviceScreenSize = double.Parse(Utility.GetConfigurationValue("IPad2Size"));
@@ -97,18 +111,18 @@ namespace Tests
             Browser.SetWindowSize(windowSize.Width, windowSize.Height);
 
             Assert.IsTrue(
-                FabricPage.IsToggleMenuIconDisplayed(),
+                SkypePage.IsToggleMenuIconDisplayed(),
                 "An IPad2 window size ({0} inches) can make menu icon appear.",
                 deviceScreenSize);
-            Assert.IsFalse(FabricPage.IsMobileMenuContentDisplayed(),
+            Assert.IsFalse(SkypePage.IsMobileMenuContentDisplayed(),
                 "When the menu icon exists, menu should be hidden.");
 
-            FabricPage.ToggleMobileMenu();
-            Assert.IsTrue(FabricPage.IsMobileMenuContentDisplayed(),
+            SkypePage.ToggleMobileMenu();
+            Assert.IsTrue(SkypePage.IsMobileMenuContentDisplayed(),
                 "When the menu icon exists and menu is hidden,clicking the menu icon should show menu.");
 
-            FabricPage.ToggleMobileMenu();
-            Assert.IsFalse(FabricPage.IsMobileMenuContentDisplayed(),
+            SkypePage.ToggleMobileMenu();
+            Assert.IsFalse(SkypePage.IsMobileMenuContentDisplayed(),
                 "When the menu icon exists and menu is shown,clicking the icon should hide menu.");
 
             //Set as the screen size of IPhone6 plus
@@ -126,7 +140,7 @@ namespace Tests
             Browser.SetWindowSize(windowSize.Height, windowSize.Width);
 
             Assert.IsTrue(
-                FabricPage.IsToggleMenuIconDisplayed(),
+                SkypePage.IsToggleMenuIconDisplayed(),
                 "An IPhone6 Plus window size ({0} inches) can make menu icon appear.",
                 deviceScreenSize);
 
@@ -138,19 +152,19 @@ namespace Tests
         /// Verify whether toggle mobile menu icon hides when the window is large.
         /// </summary>
         [TestMethod]
-        public void Acceptance_S16_TC04_CanToggleArrowHideInLargeFabricPage()
+        public void Acceptance_S17_TC04_CanToggleArrowHideInLargeSkypePage()
         {
+            Browser.GotoSkypePage();
+            
             int currentWidth = 0;
             int currentHeight = 0;
             Browser.GetWindowSize(out currentWidth, out currentHeight);
-            Pages.Navigation.Select("Explore", MenuItemOfExplore.OfficeUIFabric.ToString());
-            
             int actualWidth = 0;
             int actualHeight = 0;
             //Maxsize the window to see if it is possible to hide the arrow
             Browser.SetWindowSize(actualWidth, actualHeight, true);
             Browser.GetWindowSize(out actualWidth, out actualHeight);
-            if (FabricPage.IsToggleMenuIconDisplayed())
+            if (SkypePage.IsToggleMenuIconDisplayed())
             {
                 Browser.SetWindowSize(currentWidth, currentHeight);
                 Assert.Inconclusive(
@@ -174,13 +188,12 @@ namespace Tests
                 Browser.SetWindowSize(windowSize.Width, windowSize.Height);
 
                 Assert.IsFalse(
-                    FabricPage.IsToggleMenuIconDisplayed(),
+                    SkypePage.IsToggleMenuIconDisplayed(),
                     "An large window size ({0} inches) can make menu icon hide.",
                     deviceScreenSize);
             }
             //Recover the window size
             Browser.SetWindowSize(currentWidth, currentHeight);
         }
-
     }
 }

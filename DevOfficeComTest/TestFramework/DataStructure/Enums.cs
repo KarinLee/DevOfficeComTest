@@ -191,7 +191,7 @@ namespace TestFramework
     }
 
     /// <summary>
-    /// The nav bar items on Fabric page
+    /// The top nav bar items on Fabric page
     /// </summary>
     public enum FabricNavItem
     {
@@ -207,6 +207,25 @@ namespace TestFramework
         Resources,
         [Description("Blog")]
         Blog
+    }
+
+    /// <summary>
+    /// The top nav bar items on Skype page
+    /// </summary>
+    public enum SkypeNavItem
+    {
+        [Description("Overview")]
+        Overview,
+        [Description("Explore")]
+        Explore,
+        [Description("Getting Started")]
+        GettingStarted,
+        [Description("Skype APIs")]
+        SkypeAPIs,
+        [Description("Get Involved")]
+        GetInvolved,
+        [Description("Marketplace")]
+        Marketplace
     }
 
     public static class EnumExtension

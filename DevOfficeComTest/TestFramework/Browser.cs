@@ -401,5 +401,14 @@ namespace TestFramework
         [DllImport("gdi32.dll")]
         private static extern int GetDeviceCaps(IntPtr hdc, int Index);
 
+
+        public static void GotoSkypePage()
+        {
+            Pages.Navigation.Select("Explore", MenuItemOfExplore.Skype.ToString());
+            if (!webDriver.Title.Contains("Skype"))
+            {
+                SwitchToNewWindow();
+            }
+        }
     }
 }
