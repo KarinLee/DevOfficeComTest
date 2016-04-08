@@ -298,13 +298,24 @@ namespace TestFramework
         /// <summary>
         /// Input a query string on Graph explorer page
         /// </summary>
-        /// <param name="queryString">The query string to input</param>
-        public static void InputExplorerQueryString(string queryString)
+        /// <param name="version">The target service version</param>
+        /// <param name="request">The resource to access/manipulate in the Microsoft Graph API request</param>
+        public static void InputExplorerQueryString(string version,string resource)
         {
+            string lcn = GetLCN();
+            string request;
+            if(lcn.Equals("zh-cn"))
+            {
+                request = "https://microsoftgraph.chinacloudapi.cn/" + version + "/" + resource;
+            }
+            else
+            {
+                request = "https://graph.microsoft.com/" + version + "/" + resource;
+            }
             GraphBrowser.Wait(By.XPath(@"//input[@id=""queryBar""]"));
             var inputElement = GraphBrowser.Driver.FindElement(By.XPath(@"//input[@id=""queryBar""]"));
             inputElement.Clear();
-            inputElement.SendKeys(queryString);
+            inputElement.SendKeys(request);
         }
 
         /// <summary>

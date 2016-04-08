@@ -63,10 +63,10 @@ namespace MSGraphTest
         [TestMethod]
         public void BVT_Graph_S06_TC02_CanGoToLanguageSpecificExplorerPage()
         {
-            //Goto product site, get the current language
-            //GraphBrowser.Goto("http://graph.microsoft.io");
-            string homePageLanguage = GraphBrowser.Url.Replace(GraphBrowser.BaseAddress, "");
+            //Goto the site home page, get the current language
             string prefix = GraphUtility.RemoveRedundantPartsfromExtractBaseAddress();
+            GraphBrowser.Goto(prefix);
+            string homePageLanguage = GraphBrowser.Url.Replace(prefix, "");
             GraphBrowser.Goto(prefix+"/graph-explorer");
             string explorerLanguage = GraphBrowser.Url.Replace("https:","http:").Replace(prefix, "").Replace("graph-explorer", "");
             Assert.AreEqual(homePageLanguage,

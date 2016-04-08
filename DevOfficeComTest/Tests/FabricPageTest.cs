@@ -36,7 +36,7 @@ namespace Tests
         /// Verify whether select one item on Fabric page's own top nav bar can switch the correct page
         /// </summary>
         [TestMethod]
-        public void BVT_S16_TC01_CanSwitchDocs()
+        public void BVT_S16_TC01_CanNaviThroughMenu()
         {
             Pages.Navigation.Select("Explore", MenuItemOfExplore.OfficeUIFabric.ToString());
             Browser.SetWindowSize(0, 0, true);
