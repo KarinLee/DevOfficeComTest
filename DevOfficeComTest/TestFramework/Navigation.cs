@@ -52,13 +52,13 @@ namespace TestFramework
                 MenuItemOfDocumentation documentationItem;
                 if (Enum.TryParse(itemName, out exploreItem))
                 {
-                    IWebElement item;
+                    IWebElement item = null;
                     switch (exploreItem)
                     {
                         case (MenuItemOfExplore.WhyOffice):
                         case (MenuItemOfExplore.OfficeUIFabric):
                         case (MenuItemOfExplore.MicrosoftGraph):
-                            item = Browser.Driver.FindElement(By.CssSelector("#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > ul > li:nth-child(" + ((int)exploreItem + 1) + ") > a"));
+                            item = Browser.Driver.FindElement(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > ul > li:nth-child(" + ((int)exploreItem + 1) + ") > a"));
                             break;
                         case (MenuItemOfExplore.Android):
                         case (MenuItemOfExplore.DotNET):
@@ -68,10 +68,23 @@ namespace TestFramework
                         case (MenuItemOfExplore.PHP):
                         case (MenuItemOfExplore.Python):
                         case (MenuItemOfExplore.Ruby):
-                            item = Browser.Driver.FindElement(By.CssSelector("#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > div.tier-3.col-md-6.col-sm-5 > ul > li:nth-child(" + ((int)exploreItem - 13) + ") > a"));
+                            item = Browser.Driver.FindElement(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > div.tier-3.col-md-6.col-sm-5 > ul > li:nth-child(" + ((int)exploreItem - 13) + ") > a"));
                             break;
                         default:
-                            item = Browser.Driver.FindElement(By.CssSelector("#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > div.tier-2.col-md-3.col-sm-4 > ul > li:nth-child(" + ((int)exploreItem - 2) + ") > a"));
+                            IReadOnlyList<IWebElement> elements = Browser.Driver.FindElements(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > div.tier-2.col-md-3.col-sm-4 > ul > li> a"));
+                            for (int i = 0; i < elements.Count; i++)
+                            {
+                                if (elements[i].Text.ToLower().Contains(itemName.ToLower()))
+                                {
+                                    item = elements[i];
+                                    break;
+                                }
+                                else
+                                {
+                                    // In case of elements expire, reload them
+                                    elements = Browser.Driver.FindElements(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > div.tier-2.col-md-3.col-sm-4 > ul > li> a"));
+                                }
+                            }
                             break;
                     }
 
@@ -83,20 +96,40 @@ namespace TestFramework
 
                 if (Enum.TryParse(itemName, out resourceItem))
                 {
-                    var item = Browser.Driver.FindElement(By.CssSelector("#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > ul > li:nth-child(" + ((int)resourceItem + 1) + ") > a"));
+                    var item = Browser.Driver.FindElement(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > ul > li:nth-child(" + ((int)resourceItem + 1) + ") > a"));
                     Browser.Click(item);
                 }
 
                 if (Enum.TryParse(itemName, out documentationItem))
                 {
-                    var item = Browser.Driver.FindElement(By.CssSelector("#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > ul > li:nth-child(" + ((int)documentationItem + 1) + ") > a"));
-                    Browser.Click(item);
+                    IWebElement item = null;
+                    var elements = Browser.Driver.FindElements(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > ul > li> a"));
+                    for (int i = 0; i < elements.Count; i++)
+                    {
+                        string description = EnumExtension.GetDescription(documentationItem);
+                        if (elements[i].Text.ToLower().Contains(description.ToLower()))
+                        {
+                            item = elements[i];
+                            break;
+                        }
+                        else
+                        {
+                            // In case of elements expire, reload them
+                            elements = Browser.Driver.FindElements(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > ul > li> a"));
+                        }
+                    }
+                    if (item != null)
+                    {
+                        Browser.Click(item);
+                    }
                 }
             }
         }
 
         public bool IsAtProductPage(string productName)
         {
+            int retryCount = Int32.Parse(Utility.GetConfigurationValue("RetryCount"));
+            int waitTime = Int32.Parse(Utility.GetConfigurationValue("WaitTime"));
             switch (productName)
             {
                 case ("Outlook"):
@@ -104,11 +137,15 @@ namespace TestFramework
                     bool isAtOutlookPage = false;
                     if (canSwitchWindow)
                     {
-                        var outlookPage = new NewWindowPage();
-                        isAtOutlookPage = outlookPage.IsAt(productName);
+                        int i = 0;
+                        while (i < retryCount && !isAtOutlookPage)
+                        {
+                            var outlookPage = new NewWindowPage();
+                            isAtOutlookPage = outlookPage.IsAt(productName);
+                            i++;
+                        }
                         Browser.SwitchBack();
                     }
-
                     Browser.GoBack();
                     return isAtOutlookPage;
                 case ("DotNET"):
@@ -136,8 +173,7 @@ namespace TestFramework
         public bool IsAtOpportunityPage()
         {
             var opportunityPage = new OpportunityPage();
-            bool canLoadImage = opportunityPage.CanLoadImage();
-            return canLoadImage;
+            return opportunityPage.isAt();
         }
 
         public bool IsAtFabricPage(string fabricTitle)
@@ -187,8 +223,12 @@ namespace TestFramework
 
         public bool IsAtResourcePage(MenuItemOfResource item)
         {
+            int retryCount = Int32.Parse(Utility.GetConfigurationValue("RetryCount"));
+            int waitTime = Int32.Parse(Utility.GetConfigurationValue("WaitTime"));
+
             var resourcePage = new ResourcePage();
             bool isAtResourcePage = false;
+            int i = 0;
             switch (item)
             {
                 case (MenuItemOfResource.MiniLabs):
@@ -203,8 +243,12 @@ namespace TestFramework
                     bool canSwitchWindow = Browser.SwitchToNewWindow();
                     if (canSwitchWindow)
                     {
-                        var sandboxPage = new NewWindowPage();
-                        isAtResourcePage = sandboxPage.IsAt(EnumExtension.GetDescription(item));
+                        while (i < retryCount && !isAtResourcePage)
+                        {
+                            var sandboxPage = new NewWindowPage();
+                            isAtResourcePage = sandboxPage.IsAt(EnumExtension.GetDescription(item));
+                            i++;
+                        }
                         Browser.SwitchBack();
                     }
 
@@ -214,7 +258,6 @@ namespace TestFramework
                     isAtResourcePage = resourcePage.ResourceName.ToLower().Contains(EnumExtension.GetDescription(item).ToLower());
                     break;
             }
-
             return isAtResourcePage;
         }
 
@@ -228,8 +271,10 @@ namespace TestFramework
                     return IsAtChoosingAPIEndpointPage("Choosing your API endpoint");
                 case (MenuItemOfDocumentation.MicrosoftGraphAPI):
                     return IsAtDocumentationPage("Microsoft Graph");
-                case (MenuItemOfDocumentation.PreviousVersions):
+                case (MenuItemOfDocumentation.AllDocumentation):
                     return IsAtDocumentationPage("Office developer documentation");
+                case (MenuItemOfDocumentation.OfficeAddin):
+                    return IsAtDocumentationPage("office-add-ins");
                 default:
                     return IsAtDocumentationPage(EnumExtension.GetDescription(item));
             }
@@ -237,6 +282,9 @@ namespace TestFramework
 
         public bool IsAtExplorePage(MenuItemOfExplore item)
         {
+            int retryCount = Int32.Parse(Utility.GetConfigurationValue("RetryCount"));
+            int waitTime = Int32.Parse(Utility.GetConfigurationValue("WaitTime"));
+
             Platform platformResult;
             Product productResult;
             OtherProduct otherProduct;
@@ -250,14 +298,24 @@ namespace TestFramework
             if (Enum.TryParse(item.ToString(), out otherProduct))
             {
                 bool canSwitchWindow = Browser.SwitchToNewWindow();
+
+                if (Browser.webDriver.Title.Equals(Browser.homeTitle))
+                {
+                    canSwitchWindow = Browser.SwitchToNewWindow();
+                }
+
                 bool isAtOtherProductPage = false;
                 if (canSwitchWindow)
                 {
-                    var otherProductPage = new NewWindowPage();
-                    isAtOtherProductPage = otherProductPage.IsAt(item.ToString());
+                    int i = 0;
+                    do
+                    {
+                        Browser.Wait(TimeSpan.FromSeconds(waitTime));
+                        i++;
+                        isAtOtherProductPage = Browser.webDriver.Title.ToLower().Contains(item.ToString().ToLower());
+                    } while (i < retryCount && !isAtOtherProductPage);
                     Browser.SwitchBack();
                 }
-
                 Browser.GoBack();
                 return isAtOtherProductPage;
             }
@@ -279,14 +337,20 @@ namespace TestFramework
         {
             var documentationPage = new DocumentationPage();
             bool isAtDocumentationPage = false;
-            bool canSwitchWindow = false;
-            canSwitchWindow = Browser.SwitchToNewWindow();
-            if (canSwitchWindow)
+            if (Browser.webDriver.WindowHandles.Count > 1)
+            {
+                bool canSwitchWindow = false;
+                canSwitchWindow = Browser.SwitchToNewWindow();
+                if (canSwitchWindow)
+                {
+                    isAtDocumentationPage = documentationPage.DocumentationTitle.ToLower().Contains(pageTitle.ToLower());
+                    Browser.SwitchBack();
+                }
+            }
+            else
             {
                 isAtDocumentationPage = documentationPage.DocumentationTitle.ToLower().Contains(pageTitle.ToLower());
-                Browser.SwitchBack();
             }
-
             Browser.GoBack();
             return isAtDocumentationPage;
         }

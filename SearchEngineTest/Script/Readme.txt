@@ -1,0 +1,1 @@
+If it's expected to schedule the test, please update AutoTestConfig.xml,then run AutomationTest.bat as administrator.

@@ -26,7 +26,7 @@ namespace MSGraphTest
         [TestCleanup]
         public void TestCleanup()
         {
-            GraphBrowser.Goto(GraphUtility.GetConfigurationValue("MSGraphBaseAddress"));
+            GraphBrowser.Goto(GraphBrowser.BaseAddress);
         }
 
         /// <summary>
@@ -35,11 +35,10 @@ namespace MSGraphTest
         [TestMethod]
         public void Acceptance_Graph_S05_TC01_CanLogin()
         {
-            GraphPages.Navigation.Select("Graph explorer");
+            TestHelper.VerifyAndSelectExplorerOnNavBar();
             if (GraphUtility.IsLoggedIn())
             {
                 GraphUtility.ClickLogout();
-                GraphBrowser.Wait(TimeSpan.FromSeconds(5));
             }
             GraphUtility.ClickLogin();
             GraphUtility.Login(
@@ -54,7 +53,7 @@ namespace MSGraphTest
         [TestMethod]
         public void Comps_Graph_S05_TC02_CanGetMe()
         {
-            GraphPages.Navigation.Select("Graph explorer");
+            TestHelper.VerifyAndSelectExplorerOnNavBar();
             string userName = GraphUtility.GetConfigurationValue("GraphExplorerUserName");
 
             if (!GraphUtility.IsLoggedIn(userName))
@@ -62,7 +61,6 @@ namespace MSGraphTest
                 if (GraphUtility.IsLoggedIn())
                 {
                     GraphUtility.ClickLogout();
-                    GraphBrowser.Wait(TimeSpan.FromSeconds(5));
                 }
                 GraphUtility.ClickLogin();
 
@@ -74,9 +72,10 @@ namespace MSGraphTest
             GraphUtility.InputExplorerQueryString("https://graph.microsoft.com/v1.0/me" + "\n");
             GraphBrowser.Wait(TimeSpan.FromSeconds(10));
             string response = GraphUtility.GetExplorerResponse();
-
-            Assert.IsTrue(
-                response.Contains(@"""mail"":""" + userName + @""""),
+            string mail = GraphUtility.GetProperty(response, "mail");
+            Assert.AreEqual(
+                userName,
+                mail,
                 @"GET ""me"" can obtain the correct response");
         }
 
@@ -86,7 +85,7 @@ namespace MSGraphTest
         [TestMethod]
         public void Comps_Graph_S05_TC03_CanSwitchAPIVersion()
         {
-            GraphPages.Navigation.Select("Graph explorer");
+            TestHelper.VerifyAndSelectExplorerOnNavBar();
             string userName = GraphUtility.GetConfigurationValue("GraphExplorerUserName");
 
             if (!GraphUtility.IsLoggedIn())
@@ -101,16 +100,16 @@ namespace MSGraphTest
             GraphUtility.InputExplorerQueryString("https://graph.microsoft.com/v1.0/me" + "\n");
             GraphBrowser.Wait(TimeSpan.FromSeconds(10));
             string v10Response = GraphUtility.GetExplorerResponse();
-            Assert.IsTrue(
-                 v10Response.Contains(@"""@odata.context"":""https://graph.microsoft.com/v1.0"),
-                 "Setting a v1.0 query string should get a v1.0 response.");
+            string oDataContext = GraphUtility.GetProperty(v10Response, "@odata.context");
+            Assert.IsTrue(oDataContext.Contains("https://graph.microsoft.com/v1.0"),
+                "Setting a v1.0 query string should get a v1.0 response.");
 
             //vBeta
             GraphUtility.InputExplorerQueryString("https://graph.microsoft.com/beta/me" + "\n");
             GraphBrowser.Wait(TimeSpan.FromSeconds(10));
             string betaResponse = GraphUtility.GetExplorerResponse();
-            Assert.IsTrue(
-                betaResponse.Contains(@"""@odata.context"":""https://graph.microsoft.com/beta"),
+            oDataContext = GraphUtility.GetProperty(betaResponse, "@odata.context");
+            Assert.IsTrue(oDataContext.Contains("https://graph.microsoft.com/beta"),
                 "Setting a vBeta query string should get a vBeta response.");
         }
 
@@ -120,7 +119,7 @@ namespace MSGraphTest
         [TestMethod]
         public void Comps_Graph_S05_TC04_CanPatchMe()
         {
-            GraphPages.Navigation.Select("Graph explorer");
+            TestHelper.VerifyAndSelectExplorerOnNavBar();
             string userName = GraphUtility.GetConfigurationValue("GraphExplorerUserName");
 
             if (!GraphUtility.IsLoggedIn())
@@ -146,11 +145,20 @@ namespace MSGraphTest
             GraphUtility.ClickButton("PATCH");
             GraphUtility.Click("GET");
             GraphUtility.InputExplorerQueryString("https://graph.microsoft.com/v1.0/me" + "\n");
-            GraphBrowser.Wait(TimeSpan.FromSeconds(5));
             string getResponse = GraphUtility.GetExplorerResponse();
+            //The response doesn't change means no GET response is returned.So wait and re-obtain it
+            int waitTime = Int32.Parse(GraphUtility.GetConfigurationValue("WaitTime"));
+            int retryCount = Int32.Parse(GraphUtility.GetConfigurationValue("RetryCount"));
+            int i = 0;
 
-            Dictionary<string, string> gottenProperties = GraphUtility.ParseJsonFormatProperties(getResponse);
-            Assert.AreEqual(jobTitle, gottenProperties["jobTitle"], "The patched property should be updated accordingly");
+            while (i < retryCount && getResponse == patchResponse)
+            {
+                GraphBrowser.Wait(TimeSpan.FromSeconds(waitTime));
+                getResponse = GraphUtility.GetExplorerResponse();
+                i++;
+            }
+            string newjobTitle = GraphUtility.GetProperty(getResponse, "jobTitle");
+            Assert.AreEqual(jobTitle, newjobTitle, "The patched property should be updated accordingly");
         }
 
         /// <summary>
@@ -159,7 +167,10 @@ namespace MSGraphTest
         [TestMethod]
         public void Comps_Graph_S05_TC05_CanPostDeleteGroup()
         {
-            GraphPages.Navigation.Select("Graph explorer");
+            TestHelper.VerifyAndSelectExplorerOnNavBar();
+            int waitTime = Int32.Parse(GraphUtility.GetConfigurationValue("WaitTime"));
+            int retryCount = Int32.Parse(GraphUtility.GetConfigurationValue("RetryCount"));
+
             string userName = GraphUtility.GetConfigurationValue("GraphExplorerUserName");
 
             if (!GraphUtility.IsLoggedIn())
@@ -186,34 +197,41 @@ namespace MSGraphTest
             GraphUtility.InputExplorerQueryString("https://graph.microsoft.com/v1.0/groups" + "\n");
             GraphBrowser.WaitForExploreResponse();
             string postResponse = GraphUtility.GetExplorerResponse();
-            Dictionary<string, string> postResponseProperties = GraphUtility.ParseJsonFormatProperties(postResponse);
-
+            string postID = GraphUtility.GetProperty(postResponse, "id");
+            string postDisplayName = GraphUtility.GetProperty(postResponse, "displayName");
             // Reload the page to empty the response
             GraphBrowser.Refresh();
             //Check whether the created group can be gotten
-            GraphUtility.InputExplorerQueryString("https://graph.microsoft.com/v1.0/groups/" + postResponseProperties["id"] + "\n");
+            GraphUtility.InputExplorerQueryString("https://graph.microsoft.com/v1.0/groups/" + postID + "\n");
             GraphBrowser.WaitForExploreResponse();
             string getResponse = GraphUtility.GetExplorerResponse();
-            Dictionary<string, string> getResponseProperties = GraphUtility.ParseJsonFormatProperties(getResponse);
+            string getDisplayName = GraphUtility.GetProperty(getResponse, "displayName");
             Assert.AreEqual(
-                postResponseProperties["displayName"],
-                getResponseProperties["displayName"],
+                postDisplayName,
+                getDisplayName,
                 "The posted group should be able to GET");
 
-            //Change the operation from GET to DELETE
+            // Reload the page to empty the response
+            GraphBrowser.Refresh();
             GraphUtility.ClickButton("GET");
             GraphUtility.Click("DELETE");
-            GraphUtility.InputExplorerQueryString("https://graph.microsoft.com/v1.0/groups/" + postResponseProperties["id"] + "\n");
-            GraphBrowser.Wait(TimeSpan.FromSeconds(4));
+            GraphUtility.InputExplorerQueryString("https://graph.microsoft.com/v1.0/groups/" + postID + "\n");
+            GraphBrowser.WaitForExploreResponse();
+            string deleteResponse = GraphUtility.GetExplorerResponse();
 
             GraphUtility.Click("DELETE");
             GraphUtility.ClickButton("GET");
-            GraphUtility.InputExplorerQueryString("https://graph.microsoft.com/v1.0/groups/" + postResponseProperties["id"] + "\n");
-            GraphBrowser.Wait(TimeSpan.FromSeconds(5));
-            getResponse = GraphUtility.GetExplorerResponse();
+            GraphUtility.InputExplorerQueryString("https://graph.microsoft.com/v1.0/groups/" + postID + "\n");
+            int i = 0;
+            do
+            {
+                GraphBrowser.Wait(TimeSpan.FromSeconds(waitTime));
+                getResponse = GraphUtility.GetExplorerResponse();
+                i++;
+            } while (i < retryCount && getResponse.Equals(deleteResponse));
 
             Assert.IsTrue(
-                getResponse.Contains("\"code\":\"Request_ResourceNotFound\""),
+                getResponse.Contains("Request_ResourceNotFound"),
                 "The group should be deleted successfully");
         }
     }

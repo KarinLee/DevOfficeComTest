@@ -5,7 +5,8 @@ namespace TestFramework
 {
     public class OpportunityPage :BasePage
     {
-        public OpportunityPage()
+		private static string PageTitle = "Office Dev Center - Opportunity";
+		public OpportunityPage()
         {
         }
 
@@ -16,5 +17,11 @@ namespace TestFramework
             Url = Browser.BaseAddress + Url.Substring(Url.IndexOf('/'), Url.LastIndexOf('"') - Url.IndexOf('/'));
             return Utility.ImageExist(Url);
         }
+		public bool isAt()
+		{
+			return Browser.Title == PageTitle;
+		}
+
     }
+
 }

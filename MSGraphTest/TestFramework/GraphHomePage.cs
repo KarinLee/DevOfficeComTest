@@ -15,21 +15,21 @@ namespace TestFramework
         [FindsBy(How = How.XPath, Using = "//ul[@class='nav navbar-nav']/li/a[contains(@href,'graphexplorer2.azurewebsites.net')]")]
         private IWebElement exploreLink;
 
-        public bool CanLoadImages(GraphHomePageImages image)
+        public bool CanLoadImages(GraphPageImages image)
         {
+            string prefix = GraphUtility.RemoveRedundantPartsfromExtractBaseAddress();
             switch (image)
             {
-                case (GraphHomePageImages.MainBanner):
-                    var element = GraphBrowser.Driver.FindElement(By.CssSelector("#layout-featured > div > article > div > div > div > div"));
-                    string Url = element.GetAttribute("style");
-                    Url = GraphBrowser.BaseAddress + Url.Substring(Url.IndexOf('/'), Url.LastIndexOf('"') - Url.IndexOf('/'));
+                case (GraphPageImages.MainBanner):
+                    var element = GraphBrowser.FindElement(By.CssSelector("#layout-featured > div > article > div > div > div > div"));
+                    //The div in Home page does not have id attribute
+                    if (element == null)
+                    {
+                        element = GraphBrowser.FindElement(By.CssSelector("div#layout-featured>div>article>div>div>div>div"));
+                    }
+                    string Url = ((string)(GraphBrowser.webDriver as IJavaScriptExecutor).ExecuteScript(@"return getComputedStyle(arguments[0])['background-image'];", element)).Replace(@"url(""", "").Replace(@""")", "");
                     return GraphUtility.ImageExist(Url);
-                case (GraphHomePageImages.WebIllustration):
-                    element = GraphBrowser.Driver.FindElement(By.CssSelector("#layout-featured > div > article > div > div > div > div:nth-child(2) > div:nth-child(4)"));
-                    Url = element.GetAttribute("style");
-                    Url = GraphBrowser.BaseAddress + Url.Substring(Url.IndexOf('/'), Url.LastIndexOf('"') - Url.IndexOf('/'));
-                    return GraphUtility.ImageExist(Url);
-                case (GraphHomePageImages.Others):
+               case (GraphPageImages.Others):
                     var elements = GraphBrowser.Driver.FindElements(By.CssSelector("img"));
                     foreach (IWebElement item in elements)
                     {
@@ -45,12 +45,5 @@ namespace TestFramework
                     return false;
             }
         }
-    }
-
-    public enum GraphHomePageImages
-    {
-        MainBanner,
-        WebIllustration,
-        Others
     }
 }

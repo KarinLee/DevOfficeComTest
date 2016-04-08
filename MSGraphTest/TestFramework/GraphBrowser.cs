@@ -22,7 +22,11 @@ namespace TestFramework
 
         public static string BaseAddress
         {
-            get { return GraphUtility.GetConfigurationValue("MSGraphBaseAddress"); }
+            get
+            {
+                string address = GraphUtility.GetConfigurationValue("MSGraphBaseAddress");
+                return address.EndsWith("/") ? address.Substring(0, address.Length - 1) : address;
+            }
         }
 
         public static void Initialize()
@@ -96,7 +100,7 @@ namespace TestFramework
             foreach (var winHandler in handlers)
             {
                 webDriver.SwitchTo().Window(winHandler);
-                if (webDriver.Title.Contains(title))
+                if (webDriver.Title.ToLower().Contains(title.ToLower()))
                 {
                     return true;
                 }
@@ -258,18 +262,18 @@ namespace TestFramework
 
         static GraphBrowser()
         {
-            switch (GraphUtility.GetConfigurationValue("Browser"))
+            switch (GraphUtility.GetConfigurationValue("Browser").ToLower())
             {
-                case ("Chrome"):
+                case ("chrome"):
                     webDriver = new ChromeDriver(System.IO.Directory.GetCurrentDirectory() + @"/Drivers/");
                     break;
-                case ("IE32"):
+                case ("ie32"):
                     webDriver = new InternetExplorerDriver(System.IO.Directory.GetCurrentDirectory() + @"/Drivers/IE32/");
                     break;
-                case ("IE64"):
-                    webDriver = new InternetExplorerDriver(System.IO.Directory.GetCurrentDirectory() + @"/Drivers/IE64/");
+                case ("ie64"):
+                    webDriver = new InternetExplorerDriver(System.IO.Directory.GetCurrentDirectory() + @"/Drivers/IE64/", new InternetExplorerOptions() {RequireWindowFocus = true });
                     break;
-                case ("Firefox"):
+                case ("firefox"):
                 default:
                     webDriver = new FirefoxDriver();
                     break;
@@ -320,7 +324,6 @@ namespace TestFramework
         /// <returns>The size on current screen(in pixels)</returns>
         public static void TransferPhysicalSizeToPixelSize(double deviceSize, Size deviceResolution, out Size windowSize)
         {
-
             Panel panel = new System.Windows.Forms.Panel();
             Graphics g = System.Drawing.Graphics.FromHwnd(panel.Handle);
             IntPtr hdc = g.GetHdc();
@@ -346,8 +349,33 @@ namespace TestFramework
         /// </summary>
         public static void WaitForExploreResponse()
         {
-            var wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(30));
-            wait.Until(ExpectedConditions.ElementExists(By.CssSelector("#jsonViewer > div.ace_scroller > div > div.ace_layer.ace_text-layer > div.ace_line")));
+            GraphBrowser.Wait(By.CssSelector("#jsonViewer > div.ace_scroller > div > div.ace_layer.ace_text-layer > div.ace_line"));
+            var element = GraphBrowser.FindElement(By.CssSelector("#jsonViewer > div.ace_scroller > div > div.ace_layer.ace_text-layer > div.ace_line"));
+            int waitTime = Int32.Parse(GraphUtility.GetConfigurationValue("WaitTime"));
+            int retryCount = Int32.Parse(GraphUtility.GetConfigurationValue("RetryCount"));
+            int i = 0;
+            do
+            {
+                GraphBrowser.Wait(TimeSpan.FromSeconds(waitTime));
+                element = GraphBrowser.FindElement(By.CssSelector("#jsonViewer > div.ace_scroller > div > div.ace_layer.ace_text-layer > div.ace_line"));
+                i++;
+            } while (i < retryCount && element.Text.Equals(string.Empty));
+        }
+
+        public static bool SwitchBack()
+        {
+            string currentHandle = webDriver.CurrentWindowHandle;
+            if (!currentHandle.Equals(defaultHandle))
+            {
+                webDriver.Close();
+                webDriver.SwitchTo().Window(defaultHandle);
+                return true;
+            }
+            else
+            {
+                webDriver.SwitchTo().DefaultContent();
+                return false;
+            }
         }
     }
 }

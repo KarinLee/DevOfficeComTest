@@ -66,6 +66,7 @@
     <Compile Include="Office365PageTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="OfficeAddInPageTest.cs" />
+    <Compile Include="SiteTest.cs" />
     <Compile Include="TrainingPageTest.cs" />
   </ItemGroup>
   <ItemGroup>

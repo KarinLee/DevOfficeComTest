@@ -25,7 +25,7 @@ namespace MSGraphTest
         [TestCleanup]
         public void TestCleanup()
         {
-            GraphBrowser.Goto(GraphUtility.GetConfigurationValue("MSGraphBaseAddress"));
+            GraphBrowser.Goto(GraphBrowser.BaseAddress);
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace MSGraphTest
         [TestMethod]
         public void BVT_Graph_S01_TC01_CanBrandingNavToHomePage()
         {
-            string title = GraphPages.Navigation.Select("Home");
+            GraphPages.Navigation.Select("Home");
             //Currently ignore the Graph explorer, since this page desn't have Microsoft
             //Graph branding image
             string[] navOptions = new string[] { 
@@ -51,7 +51,7 @@ namespace MSGraphTest
             GraphUtility.ClickBranding();
 
             Assert.IsTrue(
-                GraphPages.Navigation.IsAtGraphPage(title),
+                GraphPages.Navigation.IsAtGraphPage("Home"),
                 @"Clicking the branding image should navigate to Graph Home Page");
         }
 
@@ -87,9 +87,9 @@ namespace MSGraphTest
         [TestMethod]
         public void BVT_Graph_S01_TC04_CanGoToGraphExplorerPage()
         {
-            GraphPages.Navigation.Select("Graph explorer");
+            string title = TestHelper.VerifyAndSelectExplorerOnNavBar();
             Assert.IsTrue(
-                GraphPages.Navigation.IsAtGraphPage("Graph Explorer"),
+                GraphPages.Navigation.IsAtGraphPage(title),
                 @"The opened page should be ""Graph explorer""");
         }
 
@@ -99,7 +99,7 @@ namespace MSGraphTest
         [TestMethod]
         public void BVT_Graph_S01_TC05_CanGoToAppRegistrationPage()
         {
-            string title=GraphPages.Navigation.Select("App registration");
+            string title = GraphPages.Navigation.Select("App registration");
             Assert.IsTrue(
                 GraphPages.Navigation.IsAtGraphPage(title),
                 @"The opened page should be {0}",
@@ -125,9 +125,9 @@ namespace MSGraphTest
         [TestMethod]
         public void BVT_Graph_S01_TC07_CanGoToChangelogPage()
         {
-            GraphPages.Navigation.Select("Changelog");
+            string title = GraphPages.Navigation.Select("Changelog");
             Assert.IsTrue(
-                GraphPages.Navigation.IsAtGraphPage("Changelog"),
+                GraphPages.Navigation.IsAtGraphPage(title),
                 @"The opened page should be ""Changelog""");
         }
 
@@ -150,9 +150,9 @@ namespace MSGraphTest
 
             string navPage = navOptions[new Random().Next(navOptions.Length)];
             GraphPages.Navigation.Select(navPage);
-
+            string prefix = GraphUtility.RemoveRedundantPartsfromExtractBaseAddress();
             string imageUrl = GraphUtility.GetGraphBannerImageUrl();
-            Assert.IsTrue(GraphUtility.ImageExist(GraphUtility.GetConfigurationValue("MSGraphBaseAddress") + imageUrl), "The banner image should be valid to load");
+            Assert.IsTrue(GraphUtility.ImageExist(prefix + imageUrl), "The banner image should be valid to load");
         }
 
         /// <summary>
@@ -164,7 +164,7 @@ namespace MSGraphTest
             //Currently ignore Graph explorer and Documentation, since these pages don't have banner image
             //Graph branding image
             string[] navOptions = new string[] {
-                "Home",
+                //"Home",
                 "Get started", 
                 //"Documentation", 
                 //"Graph explorer", 
@@ -177,7 +177,7 @@ namespace MSGraphTest
                 GraphPages.Navigation.Select(navPage);
                 if (navPage == "Home")
                 {
-                    foreach (GraphHomePageImages item in Enum.GetValues(typeof(GraphHomePageImages)))
+                    foreach (GraphPageImages item in Enum.GetValues(typeof(GraphPageImages)))
                     {
                         Assert.IsTrue(GraphPages.HomePage.CanLoadImages(item));
                     }

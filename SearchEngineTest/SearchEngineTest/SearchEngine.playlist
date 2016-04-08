@@ -1,0 +1,1 @@
+<Playlist Version="1.0"><Add Test="SearchEngineTest.SearchEngineTest.BVT_S01_TC02_CanFindOfficeDevCenterSite" /><Add Test="SearchEngineTest.SearchEngineTest.BVT_S01_TC01_CanFindGraphSite" /></Playlist>

@@ -8,7 +8,7 @@ namespace TestFramework
 {
     public class HomePage : BasePage
     {
-        private static string PageTitle = "Office Dev Center - Homepage";
+		private static string PageTitle = "Office Dev Center - Office Dev Center";
         
         public void SlideToLeftMenuItem()
         {
