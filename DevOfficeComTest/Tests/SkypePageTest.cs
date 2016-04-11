@@ -40,10 +40,10 @@ namespace Tests
         [TestMethod]
         public void BVT_S17_TC01_CanNavThroughSkypeMenu()
         {
-            //int currentWidth = 0;
-            //int currentHeight = 0;
-            //Browser.GetWindowSize(out currentWidth, out currentHeight);
-            //Browser.SetWindowSize(0, 0, true);
+            int currentWidth = 0;
+            int currentHeight = 0;
+            Browser.GetWindowSize(out currentWidth, out currentHeight);
+            Browser.SetWindowSize(0, 0, true);
             Browser.GotoSkypePage();
             
             foreach (SkypeNavItem item in Enum.GetValues(typeof(SkypeNavItem)))
@@ -54,8 +54,8 @@ namespace Tests
                     "Select {0} should navigate to the correct page",
                     EnumExtension.GetDescription(item));
             }
-            ////Recover the window size
-            //Browser.SetWindowSize(currentWidth, currentHeight);
+            //Recover the window size
+            Browser.SetWindowSize(currentWidth, currentHeight);
         }
 
         /// <summary>
@@ -64,10 +64,10 @@ namespace Tests
         [TestMethod]
         public void BVT_S17_TC02_CanLeftNavWork()
         {
-            //int currentWidth = 0;
-            //int currentHeight = 0;
-            //Browser.GetWindowSize(out currentWidth, out currentHeight); 
-            //Browser.SetWindowSize(0, 0, true);
+            int currentWidth = 0;
+            int currentHeight = 0;
+            Browser.GetWindowSize(out currentWidth, out currentHeight);
+            Browser.SetWindowSize(0, 0, true);
             Browser.GotoSkypePage();
 
             Array items = Enum.GetValues(typeof(SkypeNavItem));
@@ -82,8 +82,8 @@ namespace Tests
             Assert.IsTrue(page.IsValidLeftNavItem(randomIndex, out itemName),
                 "Click {0} should refer to the related doc part.",
                 itemName);
-            ////Recover the window size
-            //Browser.SetWindowSize(currentWidth, currentHeight);
+            //Recover the window size
+            Browser.SetWindowSize(currentWidth, currentHeight);
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace Tests
 
             SkypePage.ToggleMobileMenu();
             Assert.IsFalse(SkypePage.IsMobileMenuContentDisplayed(),
-                "When the menu icon exists and menu is shown,clicking the icon should hide menu.");
+                "When the menu is shown,clicking outside the menu should hide it.");
 
             //Set as the screen size of IPhone6 plus
             deviceScreenSize = double.Parse(Utility.GetConfigurationValue("IPhone6PlusSize"));

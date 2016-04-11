@@ -68,7 +68,12 @@ namespace MSGraphTest
             GraphBrowser.Goto(prefix);
             string homePageLanguage = GraphBrowser.Url.Replace(prefix, "");
             GraphBrowser.Goto(prefix+"/graph-explorer");
-            string explorerLanguage = GraphBrowser.Url.Replace("https:","http:").Replace(prefix, "").Replace("graph-explorer", "");
+            string currentUrl = GraphBrowser.Url;
+            if (prefix.StartsWith("http:"))
+            {
+                currentUrl = currentUrl.Replace("https","http");
+            }
+            string explorerLanguage = currentUrl.Replace(prefix, "").Replace("/graph-explorer", "");
             Assert.AreEqual(homePageLanguage,
                 explorerLanguage,
                 "Graph explorer neutral URL should redirect to language specific page");

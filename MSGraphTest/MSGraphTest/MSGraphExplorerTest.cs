@@ -13,7 +13,7 @@ namespace MSGraphTest
     {
         static string userName;
         static string userPassword;
-            
+        
         [ClassInitialize]
         public static void ClassInitialize(TestContext context)
         {
@@ -50,14 +50,8 @@ namespace MSGraphTest
         public void Acceptance_Graph_S05_TC01_CanLogin()
         {
             TestHelper.VerifyAndSelectExplorerOnNavBar();
-            if (GraphUtility.IsLoggedIn())
-            {
-                GraphUtility.ClickLogout();
-            }
-            GraphUtility.ClickLogin();
-            GraphUtility.Login(
-                userName,
-                userPassword);
+            TestHelper.SigninExplorer(userName, userPassword);
+
             Assert.IsTrue(GraphUtility.IsLoggedIn(userName), "Login can succeed");
         }
 
@@ -68,21 +62,17 @@ namespace MSGraphTest
         public void Comps_Graph_S05_TC02_CanGetMe()
         {
             TestHelper.VerifyAndSelectExplorerOnNavBar();
-            
+
             if (!GraphUtility.IsLoggedIn(userName))
             {
                 if (GraphUtility.IsLoggedIn())
                 {
                     GraphUtility.ClickLogout();
                 }
-                GraphUtility.ClickLogin();
-
-                GraphUtility.Login(
-                    userName,
-                    userPassword);
+                TestHelper.SigninExplorer(userName, userPassword);
             }
 
-            GraphUtility.InputExplorerQueryString("v1.0","me" + "\n");
+            GraphUtility.InputExplorerQueryString("v1.0", "me" + "\n");
             GraphBrowser.Wait(TimeSpan.FromSeconds(10));
             string response = GraphUtility.GetExplorerResponse();
             string userPrincipalName = GraphUtility.GetProperty(response, "userPrincipalName");
@@ -99,17 +89,10 @@ namespace MSGraphTest
         public void Comps_Graph_S05_TC03_CanSwitchAPIVersion()
         {
             TestHelper.VerifyAndSelectExplorerOnNavBar();
-            
-            if (!GraphUtility.IsLoggedIn())
-            {
-                GraphUtility.ClickLogin();
+            TestHelper.SigninExplorer(userName, userPassword);
 
-                GraphUtility.Login(
-                    userName,
-                    userPassword);
-            }
             //v1.0
-            GraphUtility.InputExplorerQueryString("v1.0","me" + "\n");
+            GraphUtility.InputExplorerQueryString("v1.0", "me" + "\n");
             GraphBrowser.Wait(TimeSpan.FromSeconds(10));
             string v10Response = GraphUtility.GetExplorerResponse();
             string oDataContext = GraphUtility.GetProperty(v10Response, "@odata.context");
@@ -117,7 +100,7 @@ namespace MSGraphTest
                 "Setting a v1.0 query string should get a v1.0 response.");
 
             //vBeta
-            GraphUtility.InputExplorerQueryString("beta","me" + "\n");
+            GraphUtility.InputExplorerQueryString("beta", "me" + "\n");
             GraphBrowser.Wait(TimeSpan.FromSeconds(10));
             string betaResponse = GraphUtility.GetExplorerResponse();
             oDataContext = GraphUtility.GetProperty(betaResponse, "@odata.context");
@@ -132,15 +115,8 @@ namespace MSGraphTest
         public void Comps_Graph_S05_TC04_CanPatchMe()
         {
             TestHelper.VerifyAndSelectExplorerOnNavBar();
-            
-            if (!GraphUtility.IsLoggedIn())
-            {
-                GraphUtility.ClickLogin();
+            TestHelper.SigninExplorer(userName, userPassword);
 
-                GraphUtility.Login(
-                    userName,
-                    userPassword);
-            }
             //Change the operation from GET to PATCH
             GraphUtility.ClickButton("GET");
             GraphUtility.Click("PATCH");
@@ -148,14 +124,14 @@ namespace MSGraphTest
             Dictionary<string, string> dic = new Dictionary<string, string>();
             dic.Add("jobTitle", jobTitle);
             GraphUtility.InputExplorerJSONBody(dic);
-            GraphUtility.InputExplorerQueryString("v1.0","me" + "\n");
+            GraphUtility.InputExplorerQueryString("v1.0", "me" + "\n");
             GraphBrowser.WaitForExploreResponse();
             string patchResponse = GraphUtility.GetExplorerResponse();
 
             //Change the operation from PATCH to GET
             GraphUtility.ClickButton("PATCH");
             GraphUtility.Click("GET");
-            GraphUtility.InputExplorerQueryString("v1.0","me" + "\n");
+            GraphUtility.InputExplorerQueryString("v1.0", "me" + "\n");
             string getResponse = GraphUtility.GetExplorerResponse();
             //The response doesn't change means no GET response is returned.So wait and re-obtain it
             int waitTime = Int32.Parse(GraphUtility.GetConfigurationValue("WaitTime"));
@@ -172,6 +148,8 @@ namespace MSGraphTest
             Assert.AreEqual(jobTitle, newjobTitle, "The patched property should be updated accordingly");
         }
 
+        
+
         /// <summary>
         /// Verify whether a group can be "Post"ed and "Delete"ed
         /// </summary>
@@ -179,6 +157,7 @@ namespace MSGraphTest
         public void Comps_Graph_S05_TC05_CanPostDeleteGroup()
         {
             TestHelper.VerifyAndSelectExplorerOnNavBar();
+
             int waitTime = Int32.Parse(GraphUtility.GetConfigurationValue("WaitTime"));
             int retryCount = Int32.Parse(GraphUtility.GetConfigurationValue("RetryCount"));
 
@@ -250,12 +229,12 @@ namespace MSGraphTest
         [TestMethod]
         public void Comps_Graph_S05_TC06_CanFindNoteOnChineseExplorerPage()
         {
-            GraphBrowser.Goto(GraphUtility.RemoveRedundantPartsfromExtractBaseAddress()+"/zh-cn");
+            GraphBrowser.Goto(GraphUtility.RemoveRedundantPartsfromExtractBaseAddress() + "/zh-cn");
             TestHelper.VerifyAndSelectExplorerOnNavBar();
             bool isFound = GraphUtility.FindCHNExplorerNote();
             Assert.IsTrue(isFound, "A graph explorer note for China should exist at the bottom of the page");
         }
-        
+
         /// <summary>
         /// Verify whether the request list on Chinese explorer page is valid.
         /// </summary>
