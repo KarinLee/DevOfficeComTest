@@ -117,7 +117,7 @@ namespace TestFramework.Office365Page
                     foreach (IWebElement item in elements)
                     {
                         string Url = item.GetAttribute("src");
-                        if (!Utility.ImageExist(Url))
+                        if (!Utility.FileExist(Url))
                         {
                             return false;
                         }
@@ -130,7 +130,7 @@ namespace TestFramework.Office365Page
                     {
                         IWebElement subItem = item.FindElement(By.CssSelector("img"));
                         string Url = subItem.GetAttribute("src");
-                        if (!Utility.ImageExist(Url))
+                        if (!Utility.FileExist(Url))
                         {
                             return false;
                         }

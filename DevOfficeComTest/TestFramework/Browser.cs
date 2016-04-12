@@ -1,13 +1,14 @@
-﻿using System;
-using System.Threading;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Firefox;
-using System.Collections.Generic;
-using System.Net;
-using OpenQA.Selenium.Remote;
+using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Support.UI;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace TestFramework
 {
@@ -369,6 +370,45 @@ namespace TestFramework
                     break;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Transfer the device screen size (in inches) to the pixel size on current screen(in pixels)
+        /// </summary>
+        /// <param name="deviceSize">The device Size. Commonly it is the diagonal length (in inches) of device screen</param>
+        ///<param name="deviceResolution">Screen resolution of the device</param>
+        ///<param name="windowSize">The size, in pixels, on the current screen.</param>
+        /// <returns>The size on current screen(in pixels)</returns>
+        public static void TransferPhysicalSizeToPixelSize(double deviceSize, Size deviceResolution, out Size windowSize)
+        {
+            Panel panel = new System.Windows.Forms.Panel();
+            Graphics g = System.Drawing.Graphics.FromHwnd(panel.Handle);
+            IntPtr hdc = g.GetHdc();
+
+            //Get ppi
+            int ppi = GetDeviceCaps(hdc, 88);
+            g.ReleaseHdc(hdc);
+
+            double ratio = (double)deviceResolution.Width / (double)deviceResolution.Height;
+            //According to capulating formula, ppi=Math.Sqrt(1+Math.Pow(ratio,2))*height/deviceSize
+            double dHeight = ppi * deviceSize / Math.Sqrt(1 + Math.Pow(ratio, 2));
+            double dWidth = dHeight * ratio;
+            windowSize = new Size();
+            windowSize.Height = (int)dHeight;
+            windowSize.Width = (int)dWidth;
+        }
+
+        [DllImport("gdi32.dll")]
+        private static extern int GetDeviceCaps(IntPtr hdc, int Index);
+
+
+        public static void GotoSkypePage()
+        {
+            Pages.Navigation.Select("Explore", MenuItemOfExplore.Skype.ToString());
+            if (!webDriver.Title.Contains("Skype"))
+            {
+                SwitchToNewWindow();
+            }
         }
     }
 }

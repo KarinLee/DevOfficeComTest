@@ -23,7 +23,7 @@ namespace TestFramework
         [Description("Graph Microsoft")]
         GraphMicrosoft
     }
-	
+
     public enum OtherProduct
     {
         Access,
@@ -38,7 +38,7 @@ namespace TestFramework
     public enum Platform
     {
         Android,
-        [Description("ASP.NET MVC")] 
+        [Description("ASP.NET MVC")]
         DotNET,
         iOS,
         [Description("Node.js")]
@@ -183,11 +183,49 @@ namespace TestFramework
         /// Sort by view count
         /// </summary>
         ViewCount,
-        
+
         /// <summary>
         /// Sort by date
         /// </summary>
         Date
+    }
+
+    /// <summary>
+    /// The top nav bar items on Fabric page
+    /// </summary>
+    public enum FabricNavItem
+    {
+        [Description("Overview")]
+        Overview,
+        [Description("Get Started")]
+        GetStarted,
+        [Description("Styles")]
+        Styles,
+        [Description("Components")]
+        Components,
+        [Description("Resources")]
+        Resources,
+        [Description("Blog")]
+        Blog
+    }
+
+    /// <summary>
+    /// The top nav bar items on Skype page
+    /// </summary>
+    public enum SkypeNavItem
+    {
+        [Description("Overview")]
+        Overview,
+        [Description("Explore")]
+        Explore,
+        [Description("Getting Started")]
+        GettingStarted,
+        [Description("Skype APIs")]
+        SkypeAPIs,
+        [Description("Get Involved")]
+        GetInvolved,
+        [Description("Marketplace")]
+        Marketplace
     }
 
     public static class EnumExtension

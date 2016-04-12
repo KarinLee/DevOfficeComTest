@@ -73,7 +73,7 @@ namespace TestFramework
                     {
                         string Url = item.GetAttribute("style");
                         Url = Browser.BaseAddress + Url.Substring(Url.IndexOf('/'), Url.LastIndexOf('"') - Url.IndexOf('/'));
-                        if (!Utility.ImageExist(Url))
+                        if (!Utility.FileExist(Url))
                         {
                             return false;
                         }
@@ -87,7 +87,7 @@ namespace TestFramework
                         IWebElement subItem = item.FindElement(By.CssSelector("a>div>div>div"));
                         string Url = subItem.GetAttribute("style");
                         Url = Browser.BaseAddress + Url.Substring(Url.IndexOf('/'), Url.LastIndexOf('"') - Url.IndexOf('/'));
-                        if (!Utility.ImageExist(Url))
+                        if (!Utility.FileExist(Url))
                         {
                             return false;
                         }

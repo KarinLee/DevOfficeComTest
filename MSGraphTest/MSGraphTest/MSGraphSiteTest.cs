@@ -23,6 +23,12 @@ namespace MSGraphTest
         {
             GraphBrowser.Close();
         }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            GraphBrowser.Goto(GraphBrowser.BaseAddress);
+        }
         #endregion
 
         /// <summary>
@@ -49,6 +55,28 @@ namespace MSGraphTest
             {
                 Assert.IsTrue(disallowed, "The site should not be allowed to accessby search engines");
             }
+        }
+
+        /// <summary>
+        /// Verify whether Graph explorer neutral URL redirects to language specific page
+        /// </summary>
+        [TestMethod]
+        public void BVT_Graph_S06_TC02_CanGoToLanguageSpecificExplorerPage()
+        {
+            //Goto the site home page, get the current language
+            string prefix = GraphUtility.RemoveRedundantPartsfromExtractBaseAddress();
+            GraphBrowser.Goto(prefix);
+            string homePageLanguage = GraphBrowser.Url.Replace(prefix, "");
+            GraphBrowser.Goto(prefix+"/graph-explorer");
+            string currentUrl = GraphBrowser.Url;
+            if (prefix.StartsWith("http:"))
+            {
+                currentUrl = currentUrl.Replace("https","http");
+            }
+            string explorerLanguage = currentUrl.Replace(prefix, "").Replace("/graph-explorer", "");
+            Assert.AreEqual(homePageLanguage,
+                explorerLanguage,
+                "Graph explorer neutral URL should redirect to language specific page");
         }
     }
 }

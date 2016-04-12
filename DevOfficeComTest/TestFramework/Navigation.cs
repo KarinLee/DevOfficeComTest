@@ -27,7 +27,11 @@ namespace TestFramework
             switch (menuName)
             {
                 case ("Explore"):
-                    Browser.Click(exploreLinkElement);
+                    var listElement = Browser.FindElement(By.XPath("//li[@aria-label='Explore']/div"));
+                    if (!listElement.Displayed)
+                    {
+                        Browser.Click(exploreLinkElement);
+                    }
                     break;
                 case ("Resources"):
                     Browser.Click(resourceLinkElement);

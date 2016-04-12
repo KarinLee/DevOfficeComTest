@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TestFramework
 {
@@ -257,7 +255,7 @@ namespace TestFramework
         /// </summary>
         /// <param name="Url">The image url</param>
         /// <returns>True if yes, else no</returns>
-        public static bool ImageExist(string Url)
+        public static bool FileExist(string Url)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Url);
             request.Timeout = 15000;
