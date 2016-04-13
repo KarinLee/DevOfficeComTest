@@ -420,5 +420,115 @@ namespace TestFramework
                 return (SliderMenuItem)(item + 1);
             }
         }
+
+        /// <summary>
+        /// Select a doc item on Office Developer Documentation page and click it
+        /// </summary>
+        /// <param name="item">The item to click</param>
+        public static void SelectDocItem(Enum item)
+        {
+            Browser.Wait(By.XPath("//span[text()='" + item.ToString() + "']/ancestor::a"));
+            IWebElement element = Browser.FindElement(By.XPath("//span[text()='" + item.ToString() + "']/ancestor::a"));
+            Browser.Click(element);
+        }
+
+        /// <summary>
+        /// Check whether the current Office Add-in document page is correct
+        /// </summary>
+        /// <param name="item">The selected Office Add-in doc item</param>
+        /// <returns>True if yes, else no</returns>
+        public static bool IsAtOfficeAddinDocPage(ItemOfOfficeAddinDoc item)
+        {
+            if (item.Equals(ItemOfOfficeAddinDoc.SharePoint))
+            {
+                return Browser.Title.Equals("SharePoint general development");
+            }
+            else
+            {
+                if (!Browser.Title.StartsWith("Office Dev Center - Add-ins Docs and References"))
+                {
+                    return false;
+                }
+                Browser.Wait(By.XPath("//select[@aria-label='ProductFilter']/option[@selected]"));
+                var element = Browser.FindElement(By.XPath("//select[@aria-label='ProductFilter']/option[@selected]"));
+                return element.GetAttribute("value").Equals(item.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Check whether the current MS Graph document page is correct
+        /// </summary>
+        /// <param name="item">The selected MS Graph doc item</param>
+        /// <returns>True if yes, else no</returns>
+        public static bool IsAtMSGraphDocPage(ItemOfMSGraphDoc item)
+        {
+            Browser.SwitchToNewWindow();
+            return Browser.Title.Equals("Microsoft Graph - Documentation - "+item.ToString().ToLower());
+        }
+
+        /// <summary>
+        /// Randomly select an available Office Add-in's details on Office Add-in Availability Page.
+        /// </summary>
+        /// <param name="detailItem">The selected details' subject</param>
+        public static void SelectRandomOfficeAddInDetail(out string detailItem)
+        {
+            int detailCount=Browser.webDriver.FindElements(By.CssSelector("span.ms-Table-cell.availible")).Count;
+            int index = new Random().Next(detailCount);
+            var detailElement = Browser.webDriver.FindElements(By.CssSelector("span.ms-Table-cell.availible"))[index];
+            detailItem = detailElement.GetAttribute("id");
+            Browser.Click(detailElement);
+        }
+
+        /// <summary>
+        /// Check whether a detail area is popped up
+        /// </summary>
+        /// <param name="detailItem">The expected detail subject</param>
+        /// <returns>True if yes, else no.</returns>
+        public static bool DetailExist(string detailItem)
+        {
+            var element = Browser.FindElement(By.CssSelector("div#" + detailItem + "_Details"));
+            return element != null;
+        }
+
+        public static bool CanSelectOfficeAddInRequirementSets()
+        {
+            var topElement = Browser.FindElement(By.XPath("//a[text()='requirement sets']"));
+            Browser.Click(topElement);
+            Browser.SwitchToNewWindow();
+            var head = Browser.FindElement(By.CssSelector("h1#office-add-in-requirement-sets"));
+            bool isTopLinkValid = head != null;
+            Browser.SwitchBack();
+
+            var bottomElement = Browser.FindElement(By.XPath("//a[text()='Office add-in requirement sets']"));
+            Browser.Click(bottomElement);
+            Browser.SwitchToNewWindow();
+            head = Browser.FindElement(By.CssSelector("h1#office-add-in-requirement-sets"));
+            bool isBottomLinkValid = head != null;
+            Browser.SwitchBack();
+
+            return isTopLinkValid && isBottomLinkValid;
+        }
+
+        public static bool CanSelectOfficeAddinsPlatformOverview()
+        {
+            var element = Browser.FindElement(By.XPath("//a[text()='Office Add-ins platform overview']"));
+            Browser.Click(element);
+            Browser.SwitchToNewWindow();
+            var head = Browser.FindElement(By.CssSelector("h1#office-add-ins-platform-overview"));
+            bool isValid = head != null;
+            Browser.SwitchBack();
+            return isValid;
+        }
+
+        public static bool CanSelectJavaScriptAPIforOfficereference()
+        {
+            var element = Browser.FindElement(By.XPath("//a[text()='JavaScript API for Office reference']"));
+            Browser.Click(element);
+            Browser.SwitchToNewWindow();
+            var head = Browser.FindElement(By.CssSelector("h1#javascript-api-for-office-reference"));
+            bool isValid = head != null;
+            Browser.SwitchBack();
+            return isValid;
+        }
     }
 }

@@ -67,6 +67,7 @@ namespace TestFramework
         /// <returns>True if yes, else no.</returns>
         public bool IsValidLeftNavItem(int index, out string itemText)
         {
+            Browser.Wait(By.CssSelector("ul.LeftNav-links > li:nth-child(" + (int)(index + 1) + ") > a"));
             var element = Browser.FindElement(By.CssSelector("ul.LeftNav-links > li:nth-child(" + (int)(index + 1) + ") > a"));
             itemText = element.Text;
             string href = element.GetAttribute("href");
@@ -79,6 +80,7 @@ namespace TestFramework
         /// <returns>Trye if yes, else no.</returns>
         public static bool IsMobileMenuContentDisplayed()
         {
+            Browser.Wait(TimeSpan.FromSeconds(2));
             return Browser.FindElement(By.CssSelector("div.ms-Panel-main")).Displayed;
         }
 
@@ -107,9 +109,9 @@ namespace TestFramework
             {
                 //Click at any position outside the menu to hide it
                 Actions action = new Actions(Browser.webDriver);
-                int offX = panelElement.Location.X + panelElement.Size.Width + 50;
-                int offY = panelElement.Location.Y + panelElement.Size.Height / 2;
-                action.MoveByOffset(offX, offY);
+                int offX = panelElement.Size.Width + 100;
+                int offY = panelElement.Size.Height / 2;
+                action.MoveToElement(panelElement,offX,offY);
                 action.Click().Build().Perform();
             }
         }

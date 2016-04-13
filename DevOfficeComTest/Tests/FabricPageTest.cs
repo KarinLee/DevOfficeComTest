@@ -11,6 +11,9 @@ namespace Tests
     [TestClass]
     public class FabricPageTest
     {
+        static int currentWidth;
+        static int currentHeight;
+
         #region Additional test attributes
         [ClassInitialize()]
         public static void ClassInitialize(TestContext testContext)
@@ -24,9 +27,16 @@ namespace Tests
             Browser.Close();
         }
 
+        [TestInitialize()]
+        public void TestInitialize()
+        {
+            Browser.GetWindowSize(out currentWidth, out currentHeight);
+        }
+
         [TestCleanup()]
         public void TestCleanup()
         {
+            Browser.SetWindowSize(currentWidth, currentHeight);
             Browser.Goto(Utility.GetConfigurationValue("BaseAddress"));
         }
 
@@ -39,9 +49,6 @@ namespace Tests
         public void BVT_S16_TC01_CanNaviThroughMenu()
         {
             Pages.Navigation.Select("Explore", MenuItemOfExplore.OfficeUIFabric.ToString());
-            int currentWidth = 0;
-            int currentHeight = 0;
-            Browser.GetWindowSize(out currentWidth, out currentHeight);
             Browser.SetWindowSize(0, 0, true);
             foreach (FabricNavItem item in Enum.GetValues(typeof(FabricNavItem)))
             {
@@ -51,7 +58,7 @@ namespace Tests
                     "Select {0} should navigate to the correct page",
                     EnumExtension.GetDescription(item));
             }
-            Browser.SetWindowSize(currentWidth, currentHeight);
+            
         }
 
         /// <summary>
@@ -61,9 +68,6 @@ namespace Tests
         public void BVT_S16_TC02_CanLeftNavWork()
         {
             Pages.Navigation.Select("Explore", MenuItemOfExplore.OfficeUIFabric.ToString());
-            int currentWidth = 0;
-            int currentHeight = 0;
-            Browser.GetWindowSize(out currentWidth, out currentHeight);
             Browser.SetWindowSize(0, 0, true);
             Array items = Enum.GetValues(typeof(FabricNavItem));
             int randomIndex;
@@ -77,8 +81,6 @@ namespace Tests
             Assert.IsTrue(page.IsValidLeftNavItem(randomIndex, out itemName),
                 "Click {0} should refer to the related doc part.",
                 itemName);
-
-            Browser.SetWindowSize(currentWidth, currentHeight);
         }
 
         /// <summary>
@@ -87,9 +89,6 @@ namespace Tests
         [TestMethod]
         public void Comps_S16_TC03_CanToggleArrowWorkInSmallFabricPage()
         {
-            int currentWidth = 0;
-            int currentHeight = 0;
-            Browser.GetWindowSize(out currentWidth, out currentHeight);
             Pages.Navigation.Select("Explore", MenuItemOfExplore.OfficeUIFabric.ToString());
             
             Size windowSize;
@@ -138,9 +137,6 @@ namespace Tests
                 FabricPage.IsToggleMenuIconDisplayed(),
                 "An IPhone6 Plus window size ({0} inches) can make menu icon appear.",
                 deviceScreenSize);
-
-            //Recover the window size
-            Browser.SetWindowSize(currentWidth, currentHeight);
         }
 
         /// <summary>
@@ -149,9 +145,6 @@ namespace Tests
         [TestMethod]
         public void Acceptance_S16_TC04_CanToggleArrowHideInLargeFabricPage()
         {
-            int currentWidth = 0;
-            int currentHeight = 0;
-            Browser.GetWindowSize(out currentWidth, out currentHeight);
             Pages.Navigation.Select("Explore", MenuItemOfExplore.OfficeUIFabric.ToString());
             
             int actualWidth = 0;
@@ -187,9 +180,6 @@ namespace Tests
                     "An large window size ({0} inches) can make menu icon hide.",
                     deviceScreenSize);
             }
-            //Recover the window size
-            Browser.SetWindowSize(currentWidth, currentHeight);
         }
-
     }
 }

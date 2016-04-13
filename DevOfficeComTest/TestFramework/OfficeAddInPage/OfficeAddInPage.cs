@@ -140,5 +140,15 @@ namespace TestFramework.OfficeAddInPage
                 Browser.Click(element);
             }
         }
+
+        /// <summary>
+        /// Check whether steps of building using other tools exist on the page.
+        /// </summary>
+        /// <returns>True if yes, elso no.</returns>
+        public bool BuildOtherToolsStepsExist()
+        {
+            var element = Browser.FindElement(By.CssSelector("div#build-othertools"));
+            return element.Displayed;
+        }
     }
 }

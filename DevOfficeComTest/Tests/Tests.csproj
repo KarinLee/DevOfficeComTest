@@ -60,6 +60,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="CodeSamplePageTest.cs" />
+    <Compile Include="DocumentationPageTest.cs" />
     <Compile Include="FabricPageTest.cs" />
     <Compile Include="HeaderTest.cs" />
     <Compile Include="HomePageTest.cs" />

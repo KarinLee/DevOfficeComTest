@@ -196,6 +196,23 @@ namespace Tests
             Assert.IsTrue(Pages.OfficeAddInPage.CanLoadImages());
         }
 
+        /// <summary>
+        /// Verify whether the steps of building using other tools can appear.
+        /// </summary>
+        [TestMethod]
+        public void BVT_S09_TC07_CanShowContentBuildByOtherTools()
+        {
+            Array productArrays=Enum.GetValues(typeof(Product));
+            int index = new Random().Next(productArrays.Length);
+
+            Product product = (Product)productArrays.GetValue(index);
+            Pages.OfficeAddInPage.CardChooseProduct.ChooseProduct(product);
+
+            Pages.OfficeAddInPage.SelectBuildTool();
+            Assert.IsTrue(Pages.OfficeAddInPage.BuildOtherToolsStepsExist(),
+                "The steps to build using other tools should exist.");
+        }
+
         [ClassCleanup]
         public static void ClassCleanup()
         {

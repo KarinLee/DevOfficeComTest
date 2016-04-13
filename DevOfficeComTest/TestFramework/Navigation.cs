@@ -19,7 +19,7 @@ namespace TestFramework
         [FindsBy(How = How.CssSelector, Using = "#navbar-collapse-1 > ul > li:nth-child(3) > a")]
         private IWebElement codesamplesLinkElement;
 
-        [FindsBy(How = How.CssSelector, Using = "#navbar-collapse-1 > ul > li:nth-child(5) > a")]
+        [FindsBy(How = How.XPath, Using = "//div[@id='navbar-collapse-1']/ul/li[@aria-label='Documentation']/a")]
         private IWebElement documentationLinkElement;
 
         public void Select(string menuName, string itemName = "")

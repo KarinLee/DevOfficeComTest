@@ -12,6 +12,26 @@ namespace TestFramework
         Word
     }
 
+    public enum ItemOfOfficeAddinDoc
+    {
+        Word,
+        Excel,
+        PowerPoint,
+        Outlook,
+        SharePoint,
+        Project
+    }
+
+    public enum ItemOfMSGraphDoc
+    {
+        User,
+        Group,
+        Calendar,
+        Message,
+        File,
+        Contact
+    }
+
     public enum KeyWord
     {
         [Description("Microsoft Graph")]
@@ -125,6 +145,8 @@ namespace TestFramework
         OfficeUIFabricGettingStarted,
         [Description("Office Add-ins")]
         OfficeAddin,
+        [Description("Office Add-in Availability")]
+        OfficeAddinAvailability,
         [Description("SharePoint Add-ins")]
         SharePointAddin,
         [Description("Microsoft Graph API")]
