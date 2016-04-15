@@ -62,6 +62,23 @@ namespace TestFramework
             return allContained;
         }
 
+        public static bool IsAtProfileCenterPage()
+        {
+            bool isValid = false;
+            if (Browser.webDriver.WindowHandles.Count > 1)
+            {
+                Browser.SwitchToNewWindow();
+                isValid = Browser.Url.Contains("profile.microsoft.com/RegSysProfileCenter");
+                Browser.SwitchBack();
+            }
+            else
+            {
+                isValid = Browser.Url.Contains("profile.microsoft.com/RegSysProfileCenter");
+                Browser.GoBack();
+            }
+            return isValid;
+        }
+
         /// <summary>
         /// Get the count of filters
         /// </summary>
@@ -397,18 +414,6 @@ namespace TestFramework
             }
         }
 
-        public static SliderMenuItem GetLeftMenuItem(SliderMenuItem item)
-        {
-            if ((int)item == 0)
-            {
-                return (SliderMenuItem)(Enum.GetNames(item.GetType()).Count() - 1);
-            }
-            else
-            {
-                return (SliderMenuItem)(item - 1);
-            }
-        }
-
         public static SliderMenuItem GetRightMenuItem(SliderMenuItem item)
         {
             if ((int)item == Enum.GetNames(item.GetType()).Count() - 1)
@@ -529,6 +534,46 @@ namespace TestFramework
             bool isValid = head != null;
             Browser.SwitchBack();
             return isValid;
+        }
+
+        public static bool IsAtAppDevPage(OfficeAppItem item)
+        {
+            Product productItem;
+            OtherProduct otherProductItem;
+            bool isValid = false;
+            if (Enum.TryParse(item.ToString(), out productItem))
+            {
+                isValid = Pages.Navigation.IsAtProductPage(item.ToString());
+                
+            }
+            else if (Enum.TryParse(item.ToString(), out otherProductItem))
+            {
+                isValid = Browser.webDriver.Title.ToLower().Contains(item.ToString().ToLower());
+            }
+            Browser.GoBack();
+            return isValid;
+        }
+
+        /// <summary>
+        /// Check whether the current page is the expected MS Build page
+        /// </summary>
+        /// <param name="eventTime">The expected event time</param>
+        /// <returns>True if yes, else no.</returns>
+        public static bool IsAtBuildPage(string eventTime)
+        {
+            if(eventTime!=string.Empty)
+            {
+                var element = Browser.FindElement(By.CssSelector("body > header > time"));
+                bool isValid = eventTime.Replace("–","-").Trim().EndsWith(element.Text.Replace("–","-").Trim());
+                Browser.GoBack();
+                return isValid;
+            }
+            else
+            {
+            bool isValid = Browser.webDriver.Title.StartsWith("Microsoft Build Developer Conference");
+            Browser.GoBack();
+            return isValid;
+            }
         }
     }
 }

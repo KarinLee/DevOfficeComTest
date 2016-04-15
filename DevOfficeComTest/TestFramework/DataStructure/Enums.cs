@@ -119,6 +119,21 @@ namespace TestFramework
         Ruby
     }
 
+    public enum OfficeAppItem
+    {
+        Word,
+        Excel,
+        PowerPoint,
+        Access,
+        Project,
+        OneDrive,
+        OneNote,
+        Outlook,
+        SharePoint,
+        Skype,
+        Yammer
+    }
+
     public enum MenuItemOfResource
     {
         [Description("Patterns and Practices")]

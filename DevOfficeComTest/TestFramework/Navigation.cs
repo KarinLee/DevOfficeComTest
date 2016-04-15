@@ -27,11 +27,7 @@ namespace TestFramework
             switch (menuName)
             {
                 case ("Explore"):
-                    var listElement = Browser.FindElement(By.XPath("//li[@aria-label='Explore']/div"));
-                    if (!listElement.Displayed)
-                    {
-                        Browser.Click(exploreLinkElement);
-                    }
+                    Browser.Click(exploreLinkElement);
                     break;
                 case ("Resources"):
                     Browser.Click(resourceLinkElement);
@@ -137,20 +133,25 @@ namespace TestFramework
             switch (productName)
             {
                 case ("Outlook"):
-                    bool canSwitchWindow = Browser.SwitchToNewWindow();
                     bool isAtOutlookPage = false;
-                    if (canSwitchWindow)
+                    bool shouldSwitchToNewWindow = Browser.webDriver.WindowHandles.Count > 1;
+                    if (shouldSwitchToNewWindow)
                     {
-                        int i = 0;
-                        while (i < retryCount && !isAtOutlookPage)
-                        {
-                            var outlookPage = new NewWindowPage();
-                            isAtOutlookPage = outlookPage.IsAt(productName);
-                            i++;
-                        }
+                        Browser.SwitchToNewWindow();
+                    }
+                    int i = 0;
+                    while (i < retryCount && !isAtOutlookPage)
+                    {
+                        var outlookPage = new NewWindowPage();
+                        isAtOutlookPage = outlookPage.IsAt(productName);
+                        i++;
+                    }
+                    if (shouldSwitchToNewWindow)
+                    {
                         Browser.SwitchBack();
                     }
                     Browser.GoBack();
+
                     return isAtOutlookPage;
                 case ("DotNET"):
                 case ("Node"):
