@@ -102,26 +102,9 @@ namespace TestFramework
 
                 if (Enum.TryParse(itemName, out documentationItem))
                 {
-                    IWebElement item = null;
-                    var elements = Browser.Driver.FindElements(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > ul > li> a"));
-                    for (int i = 0; i < elements.Count; i++)
-                    {
-                        string description = EnumExtension.GetDescription(documentationItem);
-                        if (elements[i].Text.ToLower().Contains(description.ToLower()))
-                        {
-                            item = elements[i];
-                            break;
-                        }
-                        else
-                        {
-                            // In case of elements expire, reload them
-                            elements = Browser.Driver.FindElements(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > ul > li> a"));
-                        }
-                    }
-                    if (item != null)
-                    {
-                        Browser.Click(item);
-                    }
+                    string description = EnumExtension.GetDescription(documentationItem);
+                    var element = Browser.FindElement(By.XPath("//li[@aria-label='Documentation']/div/div/ul/li[@aria-label='" + description + "']/a"));
+                    Browser.Click(element);
                 }
             }
         }
