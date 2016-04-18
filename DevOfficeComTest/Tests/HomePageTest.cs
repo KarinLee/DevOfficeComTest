@@ -17,6 +17,12 @@ namespace Tests
             Browser.Initialize();
         }
 
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            Browser.Goto(Browser.BaseAddress);
+        }
+
         [TestMethod]
         public void BVT_S03_TC01_CanGoToHomePage()
         {
