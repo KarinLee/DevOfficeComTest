@@ -166,16 +166,16 @@ namespace Tests
             Pages.OfficeAddInPage.SelectBuildTool();
 
             // More Resource
-            Pages.OfficeAddInPage.CardWord.MoreResouces.DesignYourAddIn();
-            Assert.IsTrue(Pages.OfficeAddInPage.CardWord.MoreResouces.IsShowingCorrectResourcePage(), "Failed to open Design guidelines page.");
-            Pages.OfficeAddInPage.CardWord.MoreResouces.MoreCodeSamples();
-            Assert.IsTrue(Pages.OfficeAddInPage.CardWord.MoreResouces.IsShowingCorrectResourcePage(), "Failed to open Code Samples page.");
-            Pages.OfficeAddInPage.CardWord.MoreResouces.OfficeAddInTypes();
-            Assert.IsTrue(Pages.OfficeAddInPage.CardWord.MoreResouces.IsShowingCorrectResourcePage(), "Failed to open Add-in Types page.");
-            Pages.OfficeAddInPage.CardWord.MoreResouces.PublishYourAddIn();
-            Assert.IsTrue(Pages.OfficeAddInPage.CardWord.MoreResouces.IsShowingCorrectResourcePage(), "Failed to open Publish AddIn page.");
-            Pages.OfficeAddInPage.CardWord.MoreResouces.ReadTheDocs();
-            Assert.IsTrue(Pages.OfficeAddInPage.CardWord.MoreResouces.IsShowingCorrectResourcePage(), "Failed to open Add-in overview page.");
+            Pages.OfficeAddInPage.CardWord.MoreResources.DesignYourAddIn();
+            Assert.IsTrue(Pages.OfficeAddInPage.CardWord.MoreResources.IsShowingCorrectResourcePage(), "Failed to open Design guidelines page.");
+            Pages.OfficeAddInPage.CardWord.MoreResources.MoreCodeSamples();
+            Assert.IsTrue(Pages.OfficeAddInPage.CardWord.MoreResources.IsShowingCorrectResourcePage(), "Failed to open Code Samples page.");
+            Pages.OfficeAddInPage.CardWord.MoreResources.OfficeAddInTypes();
+            Assert.IsTrue(Pages.OfficeAddInPage.CardWord.MoreResources.IsShowingCorrectResourcePage(), "Failed to open Add-in Types page.");
+            Pages.OfficeAddInPage.CardWord.MoreResources.PublishYourAddIn();
+            Assert.IsTrue(Pages.OfficeAddInPage.CardWord.MoreResources.IsShowingCorrectResourcePage(), "Failed to open Publish AddIn page.");
+            Pages.OfficeAddInPage.CardWord.MoreResources.ReadTheDocs();
+            Assert.IsTrue(Pages.OfficeAddInPage.CardWord.MoreResources.IsShowingCorrectResourcePage(), "Failed to open Add-in overview page.");
         }
 
         [TestMethod]
@@ -211,6 +211,8 @@ namespace Tests
             Pages.OfficeAddInPage.SelectBuildTool();
             Assert.IsTrue(Pages.OfficeAddInPage.BuildOtherToolsStepsExist(),
                 "The steps to build using other tools should exist.");
+
+            Assert.IsTrue(Pages.OfficeAddInPage.IsCardDisplayed("more"), "Card 'More Resources' in Add-in page should be displayed");
         }
 
         [ClassCleanup]

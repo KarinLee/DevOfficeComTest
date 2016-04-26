@@ -23,7 +23,7 @@ namespace TestFramework.OfficeAddInPage
                 return new CardBuild(Product.Word);
             }
         }
-        public WordMoreResources MoreResouces
+        public WordMoreResources MoreResources
         {
             get
             {

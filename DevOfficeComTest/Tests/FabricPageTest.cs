@@ -154,7 +154,6 @@ namespace Tests
             Browser.GetWindowSize(out actualWidth, out actualHeight);
             if (FabricPage.IsToggleMenuIconDisplayed())
             {
-                Browser.SetWindowSize(currentWidth, currentHeight);
                 Assert.Inconclusive(
                     "A window size ({0}*{1}) is not big enough to hide menu icon",
                     actualWidth,
