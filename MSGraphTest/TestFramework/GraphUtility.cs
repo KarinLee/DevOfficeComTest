@@ -503,18 +503,12 @@ namespace TestFramework
             {
                 tocLink = tocLink.Replace(GraphBrowser.BaseAddress, "");
             }
-            Regex reg = new Regex("(" + GraphBrowser.BaseAddress + @")?(" + tocLink.Replace(lcName + "/", "").Replace("en-us/", "") + "){1}");
+            Regex reg = new Regex("(" + GraphBrowser.BaseAddress + @")?(/docs)?(" + tocLink.Replace(lcName + "/", "").Replace("/docs", "") + "){1}");
 
             string elementSrc = GraphBrowser.FindElement(By.XPath("//iframe[@id='docframe']")).GetAttribute("src").Replace(lcName + "/", "").Replace("en-us/", "").Replace(".htm", "").Replace("/GraphDocuments", "");
             bool isMatched = reg.IsMatch(elementSrc);
-            if (isMatched)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+
+            return isMatched;
         }
 
         public static void ClickLogin()
