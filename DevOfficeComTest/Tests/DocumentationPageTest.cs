@@ -6,10 +6,10 @@ using TestFramework;
 namespace Tests
 {
     /// <summary>
-    /// Test for Fabric Page
+    /// Test class for pages under nav item Documentation
     /// </summary>
     [TestClass]
-    public class FabricPageTest
+    public class DocumentationPageTest
     {
         static int currentWidth;
         static int currentHeight;
@@ -43,54 +43,71 @@ namespace Tests
         #endregion
 
         /// <summary>
-        /// Verify whether select one item on Fabric page's own top nav bar can switch the correct page
+        /// Verify whether all links to Office add-in docs work
         /// </summary>
         [TestMethod]
-        public void BVT_S16_TC01_CanNaviThroughMenu()
+        public void BVT_S18_TC01_CanGotoOfficeAddinDocPage()
         {
-            Pages.Navigation.Select("Explore", MenuItemOfExplore.OfficeUIFabric.ToString());
-            Browser.SetWindowSize(0, 0, true);
-            foreach (FabricNavItem item in Enum.GetValues(typeof(FabricNavItem)))
+            Pages.Navigation.Select("Documentation", MenuItemOfDocumentation.AllDocumentation.ToString());
+            foreach (ItemOfOfficeAddinDoc item in Enum.GetValues(typeof(ItemOfOfficeAddinDoc)))
             {
-                FabricPage page = new FabricPage();
-                page.SelectTopNavItem(item);
-                Assert.IsTrue(page.CanSwitchCorrectPage(item),
-                    "Select {0} should navigate to the correct page",
-                    EnumExtension.GetDescription(item));
+                Utility.SelectDocItem(item);
+                Assert.IsTrue(Utility.IsAtOfficeAddinDocPage(item),
+                    "Clicking {0} should refer to the related document page",
+                    item.ToString());
+                Browser.GoBack();
             }
-            
         }
 
         /// <summary>
-        /// Verify whether select any nav link on the left can refer to the correct doc part
+        /// Verify whether all links to Office add-in docs work
         /// </summary>
         [TestMethod]
-        public void BVT_S16_TC02_CanLeftNavWork()
+        public void BVT_S18_TC02_CanGotoMSGraphDocPage()
         {
-            Pages.Navigation.Select("Explore", MenuItemOfExplore.OfficeUIFabric.ToString());
-            Browser.SetWindowSize(0, 0, true);
-            Array items = Enum.GetValues(typeof(FabricNavItem));
-            int randomIndex;
-            FabricPage page = new FabricPage();
-            //Overview and Blog don't have left nav items
-            randomIndex = new Random().Next(1, items.Length - 1);
-            page.SelectTopNavItem((FabricNavItem)items.GetValue(randomIndex));
+            Pages.Navigation.Select("Documentation", MenuItemOfDocumentation.AllDocumentation.ToString());
+            foreach (ItemOfMSGraphDoc item in Enum.GetValues(typeof(ItemOfMSGraphDoc)))
+            {
+                Utility.SelectDocItem(item);
+                Assert.IsTrue(Utility.IsAtMSGraphDocPage(item),
+                    "Clicking {0} should refer to the related document page",
+                    item.ToString());
+                Browser.SwitchBack();
+            }
+        }
 
-            randomIndex = new Random().Next(page.LeftNavItems.Count);
-            string itemName;
-            Assert.IsTrue(page.IsValidLeftNavItem(randomIndex, out itemName),
-                "Click {0} should refer to the related doc part.",
-                itemName);
+        /// <summary>
+        /// Verify whether selecting an Office add-in's details can see the expected info
+        /// on Office Add-in Availability Page
+        /// </summary>
+        [TestMethod]
+        public void BVT_S18_TC03_CanFindOfficeAddInDetail()
+        {
+            Pages.Navigation.Select("Documentation", MenuItemOfDocumentation.OfficeAddinAvailability.ToString());
+            string detailItem = string.Empty;
+            Utility.SelectRandomOfficeAddInDetail(out detailItem);
+            Assert.IsTrue(Utility.DetailExist(detailItem), "Details for {0} should appear", detailItem);
+        }
+
+        [TestMethod]
+        public void Comps_S18_TC04_CheckOfficeAddInAvailabilityPageLinks()
+        {
+            Pages.Navigation.Select("Documentation", MenuItemOfDocumentation.OfficeAddinAvailability.ToString());
+            Assert.IsTrue(Utility.CanSelectOfficeAddInRequirementSets(), "Office add-in requirement sets page should be available");
+
+            Assert.IsTrue(Utility.CanSelectOfficeAddinsPlatformOverview(), "Office Add-ins platform overview page should be available");
+
+            Assert.IsTrue(Utility.CanSelectJavaScriptAPIforOfficereference(), "JavaScript API for Office reference page should be available");
         }
 
         /// <summary>
         /// Verify whether there is a toggle arrow which work correctly when the window is small.
         /// </summary>
         [TestMethod]
-        public void Comps_S16_TC03_CanToggleArrowWorkInSmallFabricPage()
+        public void Comps_S18_TC05_CanToggleArrowWorkInOfficeAddInDocPage()
         {
-            Pages.Navigation.Select("Explore", MenuItemOfExplore.OfficeUIFabric.ToString());
-            
+            Pages.Navigation.Select("Documentation", MenuItemOfDocumentation.OfficeAddin.ToString());
+
             Size windowSize;
             //Set as the screen size of IPad2
             double deviceScreenSize = double.Parse(Utility.GetConfigurationValue("IPad2Size"));
@@ -105,19 +122,19 @@ namespace Tests
             Browser.SetWindowSize(windowSize.Width, windowSize.Height);
 
             Assert.IsTrue(
-                FabricPage.IsToggleMenuIconDisplayed(),
+                DocumentationPage.IsToggleMenuIconDisplayed(),
                 "An IPad2 window size ({0} inches) can make menu icon appear.",
                 deviceScreenSize);
-            Assert.IsFalse(FabricPage.IsMobileMenuContentDisplayed(),
+            Assert.IsFalse(DocumentationPage.IsToggleMenuContentDisplayed(),
                 "When the menu icon exists, menu should be hidden.");
 
-            FabricPage.ToggleMobileMenu();
-            Assert.IsTrue(FabricPage.IsMobileMenuContentDisplayed(),
+            DocumentationPage.ToggleMobileMenu();
+            Assert.IsTrue(DocumentationPage.IsToggleMenuContentDisplayed(),
                 "When the menu icon exists and menu is hidden,clicking the menu icon should show menu.");
 
-            FabricPage.ToggleMobileMenu();
-            Assert.IsFalse(FabricPage.IsMobileMenuContentDisplayed(),
-                "When the menu is shown,clicking outside the menu should hide it.");
+            DocumentationPage.ToggleMobileMenu();
+            Assert.IsFalse(DocumentationPage.IsToggleMenuContentDisplayed(),
+                "When the menu is shown,clicking the menu icon should hide the menu.");
 
             //Set as the screen size of IPhone6 plus
             deviceScreenSize = double.Parse(Utility.GetConfigurationValue("IPhone6PlusSize"));
@@ -134,7 +151,7 @@ namespace Tests
             Browser.SetWindowSize(windowSize.Height, windowSize.Width);
 
             Assert.IsTrue(
-                FabricPage.IsToggleMenuIconDisplayed(),
+                DocumentationPage.IsToggleMenuIconDisplayed(),
                 "An IPhone6 Plus window size ({0} inches) can make menu icon appear.",
                 deviceScreenSize);
         }
@@ -143,16 +160,16 @@ namespace Tests
         /// Verify whether toggle mobile menu icon hides when the window is large.
         /// </summary>
         [TestMethod]
-        public void Acceptance_S16_TC04_CanToggleArrowHideInLargeFabricPage()
+        public void Acceptance_S18_TC06_CanToggleArrowHideInLargeOfficeAddInDocPage()
         {
-            Pages.Navigation.Select("Explore", MenuItemOfExplore.OfficeUIFabric.ToString());
-            
+            Pages.Navigation.Select("Documentation", MenuItemOfDocumentation.OfficeAddin.ToString());
+
             int actualWidth = 0;
             int actualHeight = 0;
             //Maxsize the window to see if it is possible to hide the arrow
             Browser.SetWindowSize(actualWidth, actualHeight, true);
             Browser.GetWindowSize(out actualWidth, out actualHeight);
-            if (FabricPage.IsToggleMenuIconDisplayed())
+            if (DocumentationPage.IsToggleMenuIconDisplayed())
             {
                 Assert.Inconclusive(
                     "A window size ({0}*{1}) is not big enough to hide menu icon",
@@ -175,10 +192,30 @@ namespace Tests
                 Browser.SetWindowSize(windowSize.Width, windowSize.Height);
 
                 Assert.IsFalse(
-                    FabricPage.IsToggleMenuIconDisplayed(),
+                    DocumentationPage.IsToggleMenuIconDisplayed(),
                     "An large window size ({0} inches) can make menu icon hide.",
                     deviceScreenSize);
             }
+        }
+
+        /// <summary>
+        /// Check Office add-in doc page
+        /// </summary>
+        [TestMethod]
+        public void BVT_S18_TC07_IsOfficeAddInDocPageCorrect()
+        {
+            Pages.Navigation.Select("Documentation", MenuItemOfDocumentation.OfficeAddin.ToString());
+            
+            Assert.IsTrue(
+            DocumentationPage.HasDocHeader("Docs"),
+            "Office add in page should have 'Docs' header");
+
+            Assert.IsTrue(
+            DocumentationPage.HasDocHeader("API Reference"),
+            "Office add in page should have 'API Reference' header");
+
+            Assert.IsTrue(DocumentationPage.CanEditInGitHub(),
+                "Should be able to edit Office add-in page in github");
         }
     }
 }

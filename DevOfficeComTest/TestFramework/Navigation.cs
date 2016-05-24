@@ -19,7 +19,7 @@ namespace TestFramework
         [FindsBy(How = How.CssSelector, Using = "#navbar-collapse-1 > ul > li:nth-child(3) > a")]
         private IWebElement codesamplesLinkElement;
 
-        [FindsBy(How = How.CssSelector, Using = "#navbar-collapse-1 > ul > li:nth-child(5) > a")]
+        [FindsBy(How = How.XPath, Using = "//div[@id='navbar-collapse-1']/ul/li[@aria-label='Documentation']/a")]
         private IWebElement documentationLinkElement;
 
         public void Select(string menuName, string itemName = "")
@@ -27,11 +27,7 @@ namespace TestFramework
             switch (menuName)
             {
                 case ("Explore"):
-                    var listElement = Browser.FindElement(By.XPath("//li[@aria-label='Explore']/div"));
-                    if (!listElement.Displayed)
-                    {
-                        Browser.Click(exploreLinkElement);
-                    }
+                    Browser.Click(exploreLinkElement);
                     break;
                 case ("Resources"):
                     Browser.Click(resourceLinkElement);
@@ -106,26 +102,9 @@ namespace TestFramework
 
                 if (Enum.TryParse(itemName, out documentationItem))
                 {
-                    IWebElement item = null;
-                    var elements = Browser.Driver.FindElements(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > ul > li> a"));
-                    for (int i = 0; i < elements.Count; i++)
-                    {
-                        string description = EnumExtension.GetDescription(documentationItem);
-                        if (elements[i].Text.ToLower().Contains(description.ToLower()))
-                        {
-                            item = elements[i];
-                            break;
-                        }
-                        else
-                        {
-                            // In case of elements expire, reload them
-                            elements = Browser.Driver.FindElements(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > ul > li> a"));
-                        }
-                    }
-                    if (item != null)
-                    {
-                        Browser.Click(item);
-                    }
+                    string description = EnumExtension.GetDescription(documentationItem);
+                    var element = Browser.FindElement(By.XPath("//li[@aria-label='Documentation']/div/div/ul/li[@aria-label='" + description + "']/a"));
+                    Browser.Click(element);
                 }
             }
         }
@@ -137,20 +116,25 @@ namespace TestFramework
             switch (productName)
             {
                 case ("Outlook"):
-                    bool canSwitchWindow = Browser.SwitchToNewWindow();
                     bool isAtOutlookPage = false;
-                    if (canSwitchWindow)
+                    bool shouldSwitchToNewWindow = Browser.webDriver.WindowHandles.Count > 1;
+                    if (shouldSwitchToNewWindow)
                     {
-                        int i = 0;
-                        while (i < retryCount && !isAtOutlookPage)
-                        {
-                            var outlookPage = new NewWindowPage();
-                            isAtOutlookPage = outlookPage.IsAt(productName);
-                            i++;
-                        }
+                        Browser.SwitchToNewWindow();
+                    }
+                    int i = 0;
+                    while (i < retryCount && !isAtOutlookPage)
+                    {
+                        var outlookPage = new NewWindowPage();
+                        isAtOutlookPage = outlookPage.IsAt(productName);
+                        i++;
+                    }
+                    if (shouldSwitchToNewWindow)
+                    {
                         Browser.SwitchBack();
                     }
                     Browser.GoBack();
+
                     return isAtOutlookPage;
                 case ("DotNET"):
                 case ("Node"):

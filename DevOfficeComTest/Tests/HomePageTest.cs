@@ -17,6 +17,12 @@ namespace Tests
             Browser.Initialize();
         }
 
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            Browser.Goto(Browser.BaseAddress);
+        }
+
         [TestMethod]
         public void BVT_S03_TC01_CanGoToHomePage()
         {
@@ -32,55 +38,58 @@ namespace Tests
             }
         }
 
-		// THIS IS NO LONGER NEEDED- product changed and slider is removed.
-        //[TestMethod]
-		//public void Acceptance_S03_TC03_CanSlideToLeftMenuItem()
-		//{
-		//	SliderMenuItem item = Pages.HomePage.GetCurrentMenuItem();
-		//	Pages.HomePage.SlideToLeftMenuItem();
-		//	SliderMenuItem nextItem = Utility.GetLeftMenuItem(item);
-		//	Assert.IsTrue(Pages.HomePage.IsSliderMenuItemActive(nextItem), string.Format("The content of slider menu item {0} is not displayed correctly", nextItem.ToString()));
-		//}
+        /// <summary>
+        /// Verify whether select a product on home page to get started can navigate to
+        /// the correct page
+        /// </summary>
+		[TestMethod]
+		public void BVT_S03_TC03_CanGetStartedWithProducts()
+		{
+            foreach (OfficeAppItem item in Enum.GetValues(typeof(OfficeAppItem)))
+            {
+                Pages.HomePage.SelectGetStartedProduct(item);
+                Assert.IsTrue(Utility.IsAtAppDevPage(item),
+                    "{0} page should be valid",
+                    item.ToString());
+            }
+		}
 
-		// THIS IS NO LONGER NEEDED- product changed and slider is removed.
-		//[TestMethod]
-		//public void Acceptance_S03_TC04_CanSlideToRightMenuItem()
-		//{
-		//	SliderMenuItem item = Pages.HomePage.GetCurrentMenuItem();
-		//	Pages.HomePage.SlideToRightMenuItem();
-		//	SliderMenuItem nextItem = Utility.GetRightMenuItem(item);
-		//	Assert.IsTrue(Pages.HomePage.IsSliderMenuItemActive(nextItem), string.Format("The content of slider menu item {0} is not displayed correctly", nextItem.ToString()));
-		//}
+        /// <summary>
+        /// Verify whether Microsoft Graph page can be navigated to.
+        /// </summary>
+		[TestMethod]
+		public void BVT_S03_TC04_CanGotoGraphPage()
+		{
+            Pages.HomePage.SelectMSGraph();
+            Assert.IsTrue(Pages.Navigation.IsAtGraphPage("MicrosoftGraph"),
+                "Microsoft Graph page should be opened.");
+		}
 
-		// THIS IS NO LONGER NEEDED- product changed and slider is removed.
-		//[TestMethod]
-		//public void Comps_S03_TC05_CanChangeSliderMenuItem()
-		//{
-		//	int width;
-		//	int height;
-		//	Browser.GetWindowSize(out width, out height);
-		//	Browser.SetWindowSize(0, 0, true);
-		//	if (Pages.HomePage.IsSliderMenuItemDisplayed())
-		//	{
-		//		foreach (SliderMenuItem item in Enum.GetValues(typeof(SliderMenuItem)))
-		//		{
-		//			Pages.HomePage.ClickSliderMenu(item);
-		//			Assert.IsTrue(Pages.HomePage.IsSliderMenuItemActive(item), string.Format("The content of slider menu item {0} is not displayed correctly", item.ToString()));
-		//		}
-		//	}
-		//	else
-		//	{
-		//		Assert.Inconclusive("This test case will be inconclusive if the Slider menu item is not displayed.");
-		//	}
+        /// <summary>
+        /// Verify whether Build page can be navigated to.
+        /// </summary>
+        [TestMethod]
+        public void Comps_S03_TC05_CanGotoBuildPage()
+        {
+            string scheduledTime;
+            Pages.HomePage.SelectBuild(out scheduledTime);
+            Assert.IsTrue(Utility.IsAtBuildPage(string.Empty),
+                    "Build page should be opened");
 
-		//	Browser.SetWindowSize(width, height, false);
-		//}
+            Pages.HomePage.SelectBuild(out scheduledTime,true);
+            Assert.IsTrue(Utility.IsAtBuildPage(scheduledTime),
+                    "The build event time should be correct");
+        }
 
-        //[TestMethod]
-        //public void Acceptance_S15_TC01_CanDisplayCorrectTradeMark()
-        //{
-        //    Assert.IsTrue(Pages.HomePage.CanDisplayCorrectTradeMark());
-        //}
+        /// <summary>
+        /// Verify whether signup page can be navigated to.
+        /// </summary>
+        [TestMethod]
+        public void BVT_S03_TC06_CanGotoSignup()
+        {
+            Pages.HomePage.SelectSignup();
+            Assert.IsTrue(Utility.IsAtProfileCenterPage(),"Selecting to sign up should navigate to profile center page");
+        }
 
         [ClassCleanup]
         public static void ClassCleanup()

@@ -17,6 +17,12 @@ namespace Tests
             Browser.Initialize();
         }
 
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            Browser.Goto(Browser.BaseAddress);
+        }
+
         [TestMethod]
         public void BVT_S02_TC01_CanGoToGettingStartedPage()
         {
