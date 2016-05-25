@@ -143,13 +143,10 @@ namespace TestFramework
         Events,
         Podcasts,
         Training,
-        [Description("Mini-Labs")]
-        MiniLabs,
         Videos,
         [Description("Snack Demo Videos")]
         SnackDemoVideos,
         Showcase,
-        Transform,
         [Description("API Sandbox")]
         APISandbox
     }

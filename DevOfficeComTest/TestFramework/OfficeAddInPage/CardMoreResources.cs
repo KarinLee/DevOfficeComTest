@@ -14,13 +14,13 @@ namespace TestFramework.OfficeAddInPage
         public void OutlookDevCenter()
         {
             resourceKeyword = "Outlook Dev Center";
-            Browser.Click(Browser.Driver.FindElement(By.XPath("//div[@onclick=\"window.open('https://dev.outlook.com/MailAppsGettingStarted/GetStarted');\"]")));
+            Browser.Click(Browser.Driver.FindElement(By.XPath("//*[@onclick=\"window.open('https://dev.outlook.com/MailAppsGettingStarted/GetStarted');\"]")));
             
         }
         public void OfficeAddInTypes()
         {
             resourceKeyword = "Office Add-ins platform overview";
-            Browser.Click(Browser.Driver.FindElement(By.XPath("//div[@onclick=\"window.open('https://msdn.microsoft.com/en-us/library/office/jj220082.aspx#StartBuildingApps_TypesofApps')\"]")));
+            Browser.Click(Browser.Driver.FindElement(By.XPath("//*[@onclick=\"window.open('https://msdn.microsoft.com/en-us/library/office/jj220082.aspx#StartBuildingApps_TypesofApps')\"]")));
         }
         public void DownLoadStarterSample()
         {
@@ -33,16 +33,16 @@ namespace TestFramework.OfficeAddInPage
             switch (product)
             {
                 case Product.Excel:
-                    Browser.Click(Browser.Driver.FindElement(By.XPath("//div[@onclick=\"window.open('http://dev.office.com/code-samples#?filters=excel,office%20add-ins')\"]")));
+                    Browser.Click(Browser.Driver.FindElement(By.XPath("//*[@onclick=\"window.open('http://dev.office.com/code-samples#?filters=excel,office%20add-ins')\"]")));
                     break;
                 case Product.Outlook:
-                    Browser.Click(Browser.Driver.FindElement(By.XPath("//div[@onclick=\"window.open('http://dev.office.com/code-samples#?filters=office%20add-ins,outlook')\"]")));
+                    Browser.Click(Browser.Driver.FindElement(By.XPath("//*[@onclick=\"window.open('http://dev.office.com/code-samples#?filters=office%20add-ins,outlook')\"]")));
                     break;
                 case Product.PowerPoint:
-                    Browser.Click(Browser.Driver.FindElement(By.XPath("//div[@onclick=\"window.open('http://dev.office.com/code-samples#?filters=office%20add-ins,powerpoint')\"]")));
+                    Browser.Click(Browser.Driver.FindElement(By.XPath("//*[@onclick=\"window.open('http://dev.office.com/code-samples#?filters=office%20add-ins,powerpoint')\"]")));
                     break;
                 case Product.Word:
-                    Browser.Click(Browser.Driver.FindElement(By.XPath("//div[@onclick=\"window.open('http://dev.office.com/code-samples#?filters=office%20add-ins,word')\"]")));
+                    Browser.Click(Browser.Driver.FindElement(By.XPath("//*[@onclick=\"window.open('http://dev.office.com/code-samples#?filters=office%20add-ins,word')\"]")));
                     break;
                 default:
                     break;
@@ -52,17 +52,17 @@ namespace TestFramework.OfficeAddInPage
         public void ReadTheDocs()
         {
             resourceKeyword = "Office Add-ins platform overview";
-            Browser.Click(Browser.Driver.FindElement(By.XPath("//div[@onclick=\"window.open('https://msdn.microsoft.com/library/office/jj220082.aspx');\"]")));
+            Browser.Click(Browser.Driver.FindElement(By.XPath("//*[@onclick=\"window.open('https://msdn.microsoft.com/library/office/jj220082.aspx');\"]")));
         }
         public void DesignYourAddIn()
         {
             resourceKeyword = "Design guidelines for Office Add-ins";
-            Browser.Click(Browser.Driver.FindElement(By.XPath("//div[@onclick=\"window.open('https://msdn.microsoft.com/EN-US/library/office/mt484317.aspx');\"]")));
+            Browser.Click(Browser.Driver.FindElement(By.XPath("//*[@onclick=\"window.open('https://msdn.microsoft.com/EN-US/library/office/mt484317.aspx');\"]")));
         }
         public void PublishYourAddIn()
         {
             resourceKeyword = "Publish your Office Add-in";
-            Browser.Click(Browser.Driver.FindElement(By.XPath("//div[@onclick=\"window.open('https://msdn.microsoft.com/EN-US/library/office/fp123515.aspx');\"]")));
+            Browser.Click(Browser.Driver.FindElement(By.XPath("//*[@onclick=\"window.open('https://msdn.microsoft.com/EN-US/library/office/fp123515.aspx');\"]")));
         }
         public bool IsShowingCorrectResourcePage(Product product)
         {

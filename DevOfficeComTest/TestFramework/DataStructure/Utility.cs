@@ -450,10 +450,10 @@ namespace TestFramework
             }
             else
             {
-                if (!Browser.Title.StartsWith("Office Dev Center - Add-ins Docs and References"))
-                {
-                    return false;
-                }
+                //if (!Browser.Title.StartsWith("Office Dev Center - Add-ins Docs and References"))
+                //{
+                //    return false;
+                //}
                 Browser.Wait(By.XPath("//select[@aria-label='ProductFilter']/option[@selected]"));
                 var element = Browser.FindElement(By.XPath("//select[@aria-label='ProductFilter']/option[@selected]"));
                 return element.GetAttribute("value").Equals(item.ToString());
@@ -468,7 +468,7 @@ namespace TestFramework
         public static bool IsAtMSGraphDocPage(ItemOfMSGraphDoc item)
         {
             Browser.SwitchToNewWindow();
-            return Browser.Title.Equals("Microsoft Graph - Documentation - "+item.ToString().ToLower());
+            return Browser.Title.Equals("Microsoft Graph - Documentation - " + item.ToString().ToLower());
         }
 
         /// <summary>
@@ -477,9 +477,9 @@ namespace TestFramework
         /// <param name="detailItem">The selected details' subject</param>
         public static void SelectRandomOfficeAddInDetail(out string detailItem)
         {
-            int detailCount=Browser.webDriver.FindElements(By.CssSelector("span.ms-Table-cell.availible")).Count;
+            int detailCount = Browser.webDriver.FindElements(By.CssSelector("span.ms-Table-cell.availible")).Count;
             int index = new Random().Next(detailCount);
-            var detailElement = Browser.webDriver.FindElements(By.CssSelector("span.ms-Table-cell.availible"))[index];
+            var detailElement = Browser.webDriver.FindElements(By.CssSelector("span.ms-Table-cell.availible>button"))[index];
             detailItem = detailElement.GetAttribute("id");
             Browser.Click(detailElement);
         }
@@ -544,7 +544,7 @@ namespace TestFramework
             if (Enum.TryParse(item.ToString(), out productItem))
             {
                 isValid = Pages.Navigation.IsAtProductPage(item.ToString());
-                
+
             }
             else if (Enum.TryParse(item.ToString(), out otherProductItem))
             {
@@ -561,18 +561,18 @@ namespace TestFramework
         /// <returns>True if yes, else no.</returns>
         public static bool IsAtBuildPage(string eventTime)
         {
-            if(eventTime!=string.Empty)
+            if (eventTime != string.Empty)
             {
                 var element = Browser.FindElement(By.CssSelector("body > header > time"));
-                bool isValid = eventTime.Replace("–","-").Trim().EndsWith(element.Text.Replace("–","-").Trim());
+                bool isValid = eventTime.Replace("–", "-").Trim().EndsWith(element.Text.Replace("–", "-").Trim());
                 Browser.GoBack();
                 return isValid;
             }
             else
             {
-            bool isValid = Browser.webDriver.Title.StartsWith("Microsoft Build Developer Conference");
-            Browser.GoBack();
-            return isValid;
+                bool isValid = Browser.webDriver.Title.StartsWith("Microsoft Build Developer Conference");
+                Browser.GoBack();
+                return isValid;
             }
         }
     }

@@ -29,7 +29,6 @@ namespace Tests
         [TestCleanup()]
         public void TestCleanup()
         {
-            //Browser.Goto(Utility.GetConfigurationValue("BaseAddress"));
             Browser.SwitchBack();
         }
         #endregion

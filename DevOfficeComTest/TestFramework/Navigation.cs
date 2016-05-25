@@ -58,7 +58,8 @@ namespace TestFramework
                         case (MenuItemOfExplore.WhyOffice):
                         case (MenuItemOfExplore.OfficeUIFabric):
                         case (MenuItemOfExplore.MicrosoftGraph):
-                            item = Browser.Driver.FindElement(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > ul > li:nth-child(" + ((int)exploreItem + 1) + ") > a"));
+                            string itemText = EnumExtension.GetDescription(exploreItem);
+                            item = Browser.Driver.FindElement(By.XPath("//div[@id='navbar-collapse-1']/ul/li/div/div/ul/li/a[text()='"+itemText+"']"));
                             break;
                         case (MenuItemOfExplore.Android):
                         case (MenuItemOfExplore.DotNET):
@@ -68,10 +69,10 @@ namespace TestFramework
                         case (MenuItemOfExplore.PHP):
                         case (MenuItemOfExplore.Python):
                         case (MenuItemOfExplore.Ruby):
-                            item = Browser.Driver.FindElement(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > div.tier-3.col-md-6.col-sm-5 > ul > li:nth-child(" + ((int)exploreItem - 13) + ") > a"));
+                            item = Browser.Driver.FindElement(By.CssSelector("ul.tier-2__list > li:nth-child(" + ((int)exploreItem - 13) + ") > a"));
                             break;
                         default:
-                            IReadOnlyList<IWebElement> elements = Browser.Driver.FindElements(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > div.tier-2.col-md-3.col-sm-4 > ul > li> a"));
+                            IReadOnlyList<IWebElement> elements = Browser.Driver.FindElements(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.current.dropdown.dropActive.open > div > div > div.tier-3.col-md-6.col-sm-5 > ul > li> a"));
                             for (int i = 0; i < elements.Count; i++)
                             {
                                 if (elements[i].Text.ToLower().Contains(itemName.ToLower()))
@@ -82,7 +83,7 @@ namespace TestFramework
                                 else
                                 {
                                     // In case of elements expire, reload them
-                                    elements = Browser.Driver.FindElements(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > div.tier-2.col-md-3.col-sm-4 > ul > li> a"));
+                                    elements = Browser.Driver.FindElements(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.current.dropdown.dropActive.open > div > div > div.tier-3.col-md-6.col-sm-5 > ul > li> a"));
                                 }
                             }
                             break;
@@ -219,10 +220,6 @@ namespace TestFramework
             int i = 0;
             switch (item)
             {
-                case (MenuItemOfResource.MiniLabs):
-                    string miniLabsName = EnumExtension.GetDescription(item).Replace("-", " ").ToLower();
-                    isAtResourcePage = resourcePage.ResourceName.ToLower().Contains(miniLabsName);
-                    break;
                 case (MenuItemOfResource.SnackDemoVideos):
                     string snackVideosName = EnumExtension.GetDescription(item).Replace("Demo ", "").ToLower();
                     isAtResourcePage = resourcePage.ResourceName.ToLower().Contains(snackVideosName);
@@ -331,13 +328,15 @@ namespace TestFramework
                 canSwitchWindow = Browser.SwitchToNewWindow();
                 if (canSwitchWindow)
                 {
-                    isAtDocumentationPage = documentationPage.DocumentationTitle.ToLower().Contains(pageTitle.ToLower());
+                    isAtDocumentationPage = documentationPage.DocumentationTitle.ToLower().Contains(pageTitle.ToLower()) 
+                        || Browser.webDriver.Url.ToLower().Contains(pageTitle.ToLower());
                     Browser.SwitchBack();
                 }
             }
             else
             {
-                isAtDocumentationPage = documentationPage.DocumentationTitle.ToLower().Contains(pageTitle.ToLower());
+                isAtDocumentationPage = documentationPage.DocumentationTitle.ToLower().Contains(pageTitle.ToLower())
+                || Browser.webDriver.Url.ToLower().Contains(pageTitle.ToLower());
             }
             Browser.GoBack();
             return isAtDocumentationPage;
