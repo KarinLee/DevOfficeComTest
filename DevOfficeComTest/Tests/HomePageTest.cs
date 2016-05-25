@@ -65,21 +65,22 @@ namespace Tests
                 "Microsoft Graph page should be opened.");
 		}
 
+        // Build section is removed from homepage. So comment out this case for now.
         /// <summary>
         /// Verify whether Build page can be navigated to.
         /// </summary>
-        [TestMethod]
-        public void Comps_S03_TC05_CanGotoBuildPage()
-        {
-            string scheduledTime;
-            Pages.HomePage.SelectBuild(out scheduledTime);
-            Assert.IsTrue(Utility.IsAtBuildPage(string.Empty),
-                    "Build page should be opened");
+        //[TestMethod]
+        //public void Comps_S03_TC05_CanGotoBuildPage()
+        //{
+        //    string scheduledTime;
+        //    Pages.HomePage.SelectBuild(out scheduledTime);
+        //    Assert.IsTrue(Utility.IsAtBuildPage(string.Empty),
+        //            "Build page should be opened");
 
-            Pages.HomePage.SelectBuild(out scheduledTime,true);
-            Assert.IsTrue(Utility.IsAtBuildPage(scheduledTime),
-                    "The build event time should be correct");
-        }
+        //    Pages.HomePage.SelectBuild(out scheduledTime,true);
+        //    Assert.IsTrue(Utility.IsAtBuildPage(scheduledTime),
+        //            "The build event time should be correct");
+        //}
 
         /// <summary>
         /// Verify whether signup page can be navigated to.

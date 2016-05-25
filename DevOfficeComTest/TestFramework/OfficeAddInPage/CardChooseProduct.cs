@@ -41,7 +41,7 @@ namespace TestFramework.OfficeAddInPage
 
         public bool IsShowingVideo(Product productName)
         {
-            var videoIframe = Browser.FindElement(By.CssSelector("#embedContents>iframe"));
+            var videoIframe = Browser.FindElement(By.CssSelector("#embedContents>div>iframe"));
             string videoUrl = videoIframe.GetAttribute("src"); 
             switch (productName)
             {
