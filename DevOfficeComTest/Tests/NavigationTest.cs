@@ -139,6 +139,7 @@ namespace Tests
                 {
                     case (MenuItemOfResource.AppRegistrationTool):
                     case (MenuItemOfResource.APISandbox):
+                    case (MenuItemOfResource.Showcase):
                         break;
                     case (MenuItemOfResource.Training):
                         Browser.SetWaitTime(TimeSpan.FromSeconds(30));

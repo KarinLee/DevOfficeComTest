@@ -224,6 +224,10 @@ namespace TestFramework
                     string snackVideosName = EnumExtension.GetDescription(item).Replace("Demo ", "").ToLower();
                     isAtResourcePage = resourcePage.ResourceName.ToLower().Contains(snackVideosName);
                     break;
+                case (MenuItemOfResource.Showcase):
+                    isAtResourcePage = resourcePage.ResourceName.Equals("Better With");
+                    Browser.GoBack();
+                    break;
                 case (MenuItemOfResource.APISandbox):
                     bool canSwitchWindow = Browser.SwitchToNewWindow();
                     if (canSwitchWindow)

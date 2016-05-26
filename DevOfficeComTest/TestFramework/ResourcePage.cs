@@ -76,7 +76,7 @@ namespace TestFramework
                     resourceName = Browser.FindElement(By.CssSelector("div#register-app > h1"));
                 }
             }
-            resourceTitle = resourceName.Text;
+            resourceTitle = resourceName!=null?resourceName.Text:Browser.webDriver.Title;
             Browser.SetWaitTime(TimeSpan.FromSeconds(Utility.DefaultWaitTime));
         }
     }
