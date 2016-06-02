@@ -404,6 +404,7 @@ namespace TestFramework
 
         public static void GotoSkypePage()
         {
+            webDriver.Navigate().Refresh();
             Pages.Navigation.Select("Explore", MenuItemOfExplore.Skype.ToString());
             if (!webDriver.Title.Contains("Skype"))
             {

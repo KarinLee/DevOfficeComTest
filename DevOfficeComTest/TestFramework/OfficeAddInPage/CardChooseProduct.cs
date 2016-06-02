@@ -42,7 +42,11 @@ namespace TestFramework.OfficeAddInPage
         public bool IsShowingVideo(Product productName)
         {
             var videoIframe = Browser.FindElement(By.CssSelector("#embedContents>div>iframe"));
-            string videoUrl = videoIframe.GetAttribute("src"); 
+            if (videoIframe == null)
+            {
+                videoIframe = Browser.FindElement(By.CssSelector("#embedContents>iframe"));
+            }
+            string videoUrl = videoIframe.GetAttribute("src");
             switch (productName)
             {
                 case Product.Excel:
@@ -50,7 +54,7 @@ namespace TestFramework.OfficeAddInPage
                 case Product.Outlook:
                     return videoUrl == "https://www.youtube.com/embed/Hov8f_VniCc";
                 case Product.PowerPoint:
-                    return videoUrl == "https://www.youtube.com/embed/tFq_dl1yUUc"; 
+                    return videoUrl == "https://www.youtube.com/embed/tFq_dl1yUUc";
                 case Product.Word:
                     return videoUrl == "https://www.youtube.com/embed/S23rcdX96Wc";
                 default:

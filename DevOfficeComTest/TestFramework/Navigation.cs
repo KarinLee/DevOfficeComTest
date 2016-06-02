@@ -69,10 +69,10 @@ namespace TestFramework
                         case (MenuItemOfExplore.PHP):
                         case (MenuItemOfExplore.Python):
                         case (MenuItemOfExplore.Ruby):
-                            item = Browser.Driver.FindElement(By.CssSelector("ul.tier-2__list > li:nth-child(" + ((int)exploreItem - 13) + ") > a"));
+                            item = Browser.Driver.FindElement(By.CssSelector("ul.tier-3__list > li:nth-child(" + ((int)exploreItem - 13) + ") > a"));
                             break;
                         default:
-                            IReadOnlyList<IWebElement> elements = Browser.Driver.FindElements(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.current.dropdown.dropActive.open > div > div > div.tier-3.col-md-6.col-sm-5 > ul > li> a"));
+                            IReadOnlyList<IWebElement> elements = Browser.Driver.FindElements(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > div.tier-2.col-md-3.col-sm-4 > ul > li> a"));
                             for (int i = 0; i < elements.Count; i++)
                             {
                                 if (elements[i].Text.ToLower().Contains(itemName.ToLower()))
@@ -83,7 +83,7 @@ namespace TestFramework
                                 else
                                 {
                                     // In case of elements expire, reload them
-                                    elements = Browser.Driver.FindElements(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.current.dropdown.dropActive.open > div > div > div.tier-3.col-md-6.col-sm-5 > ul > li> a"));
+                                    elements = Browser.Driver.FindElements(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > div.tier-2.col-md-3.col-sm-4 > ul > li> a"));
                                 }
                             }
                             break;
@@ -223,10 +223,6 @@ namespace TestFramework
                 case (MenuItemOfResource.SnackDemoVideos):
                     string snackVideosName = EnumExtension.GetDescription(item).Replace("Demo ", "").ToLower();
                     isAtResourcePage = resourcePage.ResourceName.ToLower().Contains(snackVideosName);
-                    break;
-                case (MenuItemOfResource.Showcase):
-                    isAtResourcePage = resourcePage.ResourceName.Equals("Better With");
-                    Browser.GoBack();
                     break;
                 case (MenuItemOfResource.APISandbox):
                     bool canSwitchWindow = Browser.SwitchToNewWindow();
