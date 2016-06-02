@@ -146,7 +146,6 @@ namespace TestFramework
         Videos,
         [Description("Snack Demo Videos")]
         SnackDemoVideos,
-        Showcase,
         [Description("API Sandbox")]
         APISandbox
     }
