@@ -52,19 +52,38 @@ namespace Tests
         public void Acceptance_S14_TC02_Can_Search_CorrectTrainings()
         {
             Pages.Navigation.Select("Resources", "Training");
+            int filterCount = Utility.GetFilterCount();
+            int randomFilterIndex=new Random().Next(filterCount);;
+            string filterName = Utility.SelectFilter(randomFilterIndex);
+
             int randomIndex = new Random().Next(Utility.TypicalSearchText.Length);
             string searchString = Utility.TypicalSearchText[randomIndex];
-
+            bool isFound = false;
             List<SearchedResult> resultList = Utility.GetFilterResults(searchString);
-            foreach (SearchedResult resultInfo in resultList)
+            if (resultList.Count > 0)
             {
-                bool isNameMatched = resultInfo.Name.ToLower().Contains(searchString.ToLower());
-                bool isDescriptionMatched = resultInfo.Description.ToLower().Contains(searchString.ToLower());
-                Assert.IsTrue(isNameMatched || isDescriptionMatched,
-                    "The training:\n {0}:{1}\n should contain the search text: {2}",
-                    resultInfo.Name,
-                    resultInfo.Description,
-                    searchString);
+                foreach (SearchedResult resultInfo in resultList)
+                {
+                    bool isNameMatched = resultInfo.Name.ToLower().Contains(searchString.ToLower());
+                    bool isDescriptionMatched = resultInfo.Description.ToLower().Contains(searchString.ToLower());
+                    isFound = isNameMatched || isDescriptionMatched;
+                    if (isFound)
+                    {
+                        break;
+                    }
+                }
+                if (!isFound)
+                {
+                    Assert.Inconclusive(@"when searching ""{0}"" under ""{1}"" type, none of the searched results explicitly contain the searh text in title or description",
+                        searchString,
+                        filterName);
+                }
+            }
+            else 
+            {
+                Assert.Inconclusive(@"No trainging is found when searching ""{0}"" under ""{1}"" type",
+                    searchString,
+                    filterName);
             }
         }
 
