@@ -50,7 +50,7 @@ namespace Tests
         }
 
         /// <summary>
-        /// Check videos' "Get Started" links
+        /// Check build-video' Share icon and shared link
         /// </summary>
         [TestMethod]
         public void BVT_S19_TC02_CheckShareOnTwitter()
