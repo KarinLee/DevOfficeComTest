@@ -40,12 +40,12 @@ namespace Tests
         public void BVT_S19_TC01_CheckGetStartedLinks()
         {
             Pages.Navigation.Select("Resources", "BuildVideos");
-            string videoTitle;
-            Utility.CheckBuildVideosPageGetStartedLinks(out videoTitle);
-            if (!videoTitle.Equals(string.Empty))
+            string videoWithNoLink;
+            Utility.CheckBuildVideosPageGetStartedLinks(out videoWithNoLink);
+            if (!videoWithNoLink.Equals(string.Empty))
             {
-                Assert.Fail("{0}'s Get Started link does nor refer to the correct page",
-                    videoTitle);
+                Assert.Fail("{0}'s Get Started link does not refer to the correct page",
+                    videoWithNoLink);
             }
         }
 
