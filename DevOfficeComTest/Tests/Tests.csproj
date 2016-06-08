@@ -71,6 +71,7 @@
     <Compile Include="SiteTest.cs" />
     <Compile Include="SkypePageTest.cs" />
     <Compile Include="TrainingPageTest.cs" />
+    <Compile Include="BuildVideoPageTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TestFramework\TestFramework.csproj">

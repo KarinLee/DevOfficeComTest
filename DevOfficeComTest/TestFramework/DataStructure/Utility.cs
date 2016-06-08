@@ -575,5 +575,60 @@ namespace TestFramework
                 return isValid;
             }
         }
+
+        /// <summary>
+        /// Check videos' GetStarted links on "//build videos" page
+        /// </summary>
+        /// <param name="videoTitle">The title of the first video whose Get Started link is incorrect</param>
+        public static void CheckBuildVideosPageGetStartedLinks(out string videoTitle)
+        {
+            int count = GetBuildVideoCount();
+            for (int i = 0; i < count; i++)
+            {
+                var element = Browser.webDriver.FindElements(By.CssSelector("div.videoText>a"))[i];
+                if (!element.GetAttribute("href").Equals(Browser.BaseAddress + "/getting-started"))
+                {
+                    videoTitle = element.FindElement(By.XPath("preceding-sibling::p[@class='video-title js-play']")).GetAttribute("id").Replace("-title", "");
+                }
+            }
+            videoTitle = string.Empty;
+        }
+
+        /// <summary>
+        /// Returns the number of build videos
+        /// </summary>
+        public static int GetBuildVideoCount()
+        {
+            return Browser.webDriver.FindElements(By.CssSelector("div.videoText")).Count;
+        }
+
+        /// <summary>
+        /// Check a build video's Twitter-shared link
+        /// </summary>
+        /// <param name="index">The index of the build video to check </param>
+        /// <param name="videoTitle">The video's title if its shared link is incorrect</param>
+        /// <param name="sharedLink">The video's shared link if it is incorrect</param>
+        public static void CheckBuildVideosPageShareOnTwitter(int index, out string videoTitle, out string sharedLink)
+        {
+            var element = Browser.webDriver.FindElements(By.CssSelector("div.videoText>i.shareButton"))[index];
+            string currentVideoTitle = element.FindElement(By.XPath("preceding-sibling::p[@class='video-title js-play']")).GetAttribute("id").Replace("-title", "");
+            Browser.Click(element);
+            var twitterLink = Browser.FindElement(By.XPath("//li[@class='at4m-listitem']/a[@title='Twitter']"));
+            Browser.Click(twitterLink);
+            Browser.SwitchToNewWindow();
+            string sharedText = Browser.FindElement(By.CssSelector("textarea#status")).Text;
+            string expectedSharedlink = Browser.BaseAddress+"/build-videos#?" + currentVideoTitle.Replace(" ", "-").ToLower();
+            if (sharedText.EndsWith(expectedSharedlink))
+            {
+                videoTitle = string.Empty;
+                sharedLink = string.Empty;
+            }
+            else
+            {
+                videoTitle = currentVideoTitle;
+                sharedLink = sharedText.Replace("Office Dev Center - //build Videos ", "");
+            }
+            Browser.SwitchBack();
+        }
     }
 }

@@ -147,7 +147,9 @@ namespace TestFramework
         [Description("Snack Demo Videos")]
         SnackDemoVideos,
         [Description("API Sandbox")]
-        APISandbox
+        APISandbox,
+        [Description("//build videos")]
+        BuildVideos
     }
 
     public enum MenuItemOfDocumentation
