@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="BasePage.cs" />
     <Compile Include="Browser.cs" />
+    <Compile Include="BuildVideoPage.cs" />
     <Compile Include="DataStructure\Structures.cs" />
     <Compile Include="ChoosingAPIEndpointPage.cs" />
     <Compile Include="CodeSamplesPage.cs" />
