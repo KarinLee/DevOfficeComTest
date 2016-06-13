@@ -12,6 +12,26 @@ namespace TestFramework
         Word
     }
 
+    public enum ItemOfOfficeAddinDoc
+    {
+        Word,
+        Excel,
+        PowerPoint,
+        Outlook,
+        SharePoint,
+        Project
+    }
+
+    public enum ItemOfMSGraphDoc
+    {
+        User,
+        Group,
+        Calendar,
+        Message,
+        File,
+        Contact
+    }
+
     public enum KeyWord
     {
         [Description("Microsoft Graph")]
@@ -23,7 +43,7 @@ namespace TestFramework
         [Description("Graph Microsoft")]
         GraphMicrosoft
     }
-	
+
     public enum OtherProduct
     {
         Access,
@@ -38,7 +58,7 @@ namespace TestFramework
     public enum Platform
     {
         Android,
-        [Description("ASP.NET MVC")] 
+        [Description("ASP.NET MVC")]
         DotNET,
         iOS,
         [Description("Node.js")]
@@ -99,6 +119,21 @@ namespace TestFramework
         Ruby
     }
 
+    public enum OfficeAppItem
+    {
+        Word,
+        Excel,
+        PowerPoint,
+        Access,
+        Project,
+        OneDrive,
+        OneNote,
+        Outlook,
+        SharePoint,
+        Skype,
+        Yammer
+    }
+
     public enum MenuItemOfResource
     {
         [Description("Patterns and Practices")]
@@ -108,15 +143,13 @@ namespace TestFramework
         Events,
         Podcasts,
         Training,
-        [Description("Mini-Labs")]
-        MiniLabs,
         Videos,
         [Description("Snack Demo Videos")]
         SnackDemoVideos,
-        Showcase,
-        Transform,
         [Description("API Sandbox")]
-        APISandbox
+        APISandbox,
+        [Description("//build videos")]
+        BuildVideos
     }
 
     public enum MenuItemOfDocumentation
@@ -125,6 +158,8 @@ namespace TestFramework
         OfficeUIFabricGettingStarted,
         [Description("Office Add-ins")]
         OfficeAddin,
+        [Description("Office Add-in Availability")]
+        OfficeAddinAvailability,
         [Description("SharePoint Add-ins")]
         SharePointAddin,
         [Description("Microsoft Graph API")]
@@ -183,11 +218,49 @@ namespace TestFramework
         /// Sort by view count
         /// </summary>
         ViewCount,
-        
+
         /// <summary>
         /// Sort by date
         /// </summary>
         Date
+    }
+
+    /// <summary>
+    /// The top nav bar items on Fabric page
+    /// </summary>
+    public enum FabricNavItem
+    {
+        [Description("Overview")]
+        Overview,
+        [Description("Get Started")]
+        GetStarted,
+        [Description("Styles")]
+        Styles,
+        [Description("Components")]
+        Components,
+        [Description("Resources")]
+        Resources,
+        [Description("Blog")]
+        Blog
+    }
+
+    /// <summary>
+    /// The top nav bar items on Skype page
+    /// </summary>
+    public enum SkypeNavItem
+    {
+        [Description("Overview")]
+        Overview,
+        [Description("Explore")]
+        Explore,
+        [Description("Getting Started")]
+        GettingStarted,
+        [Description("Skype APIs")]
+        SkypeAPIs,
+        [Description("Get Involved")]
+        GetInvolved,
+        [Description("Marketplace")]
+        Marketplace
     }
 
     public static class EnumExtension

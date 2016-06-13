@@ -84,7 +84,7 @@ namespace TestFramework.OfficeAddInPage
             foreach (IWebElement item in elements)
             {
                 string Url = item.GetAttribute("src");
-                if (!Utility.ImageExist(Url))
+                if (!Utility.FileExist(Url))
                 {
                     return false;
                 }
@@ -139,6 +139,16 @@ namespace TestFramework.OfficeAddInPage
                 var element = Browser.FindElement(By.CssSelector("button#button-othertools"));
                 Browser.Click(element);
             }
+        }
+
+        /// <summary>
+        /// Check whether steps of building using other tools exist on the page.
+        /// </summary>
+        /// <returns>True if yes, elso no.</returns>
+        public bool BuildOtherToolsStepsExist()
+        {
+            var element = Browser.FindElement(By.CssSelector("div#build-othertools"));
+            return element.Displayed;
         }
     }
 }

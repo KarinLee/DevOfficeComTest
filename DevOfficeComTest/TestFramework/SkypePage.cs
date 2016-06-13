@@ -1,16 +1,12 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
-using OpenQA.Selenium.Support.PageObjects;
 using System;
 using System.Collections.Generic;
 
 namespace TestFramework
 {
-    public class FabricPage : BasePage
+    public class SkypePage : BasePage
     {
-        [FindsBy(How = How.XPath, Using = "//div[contains(@class,'Carousel-staticContent')]")]
-        private IWebElement fabricPageTitle;
-
         public IReadOnlyList<IWebElement> LeftNavItems
         {
             get
@@ -19,44 +15,50 @@ namespace TestFramework
             }
         }
 
-        public string FabricPageTitle
-        {
-            get { return fabricPageTitle.Text; }
-        }
-
         /// <summary>
-        /// Select an item on Fabric page's own top nav bar.
+        /// Select an item on Skype page's own top nav bar.
         /// </summary>
-        public void SelectTopNavItem(FabricNavItem item)
+        public void SelectTopNavItem(SkypeNavItem item)
         {
             int waitTime = Int32.Parse(Utility.GetConfigurationValue("WaitTime"));
             string itemToSelect = EnumExtension.GetDescription(item);
-            Browser.Wait(By.XPath("//ul[@class='docs-Nav']/li/a[text()='" + itemToSelect + "']"));
-            var element = Browser.FindElement(By.XPath("//ul[@class='docs-Nav']/li/a[text()='" + itemToSelect + "']"));
+            Browser.Wait(By.XPath("//ul[@class='docs-NavItemsContainer']/li/a[text()='" + itemToSelect + "']"));
+            var element = Browser.FindElement(By.XPath("//ul[@class='docs-NavItemsContainer']/li/a[text()='" + itemToSelect + "']"));
             Browser.Click(element);
             Browser.Wait(TimeSpan.FromSeconds(waitTime));
         }
 
         /// <summary>
-        /// Check whether select a fabric nav item can navigate to the correct page
+        /// Check whether select a skype nav item can navigate to the correct page
         /// </summary>
         /// <param name="item">The item selected</param>
         /// <returns>True if yes, else no.</returns>
-        public bool CanSwitchCorrectPage(FabricNavItem item)
+        public bool CanSwitchCorrectPage(SkypeNavItem item)
         {
             string itemSelected = EnumExtension.GetDescription(item);
-            if (itemSelected.Equals("Overview"))
+            string end = string.Empty;
+            switch (itemSelected)
             {
-                return Browser.webDriver.Title.EndsWith("Fabric Home Page");
+                case "Overview":
+                    end = "Skype";
+                    break;
+                case "Explore":
+                    end = "explore";
+                    break;
+                case "Getting Started":
+                    end = "gettingStarted";
+                    break;
+                case "Skype APIs":
+                    end = "skype-sdks";
+                    break;
+                case "Get Involved":
+                    end = "getInvolved";
+                    break;
+                case "Marketplace":
+                    end = "marketplace";
+                    break;
             }
-            else if (itemSelected.Equals("Get Started"))
-            {
-                return Browser.webDriver.Title.EndsWith("Getting Started");
-            }
-            else
-            {
-                return Browser.webDriver.Title.EndsWith(itemSelected);
-            }
+            return !end.Equals(string.Empty) && Browser.webDriver.Title.EndsWith(end);
         }
 
         /// <summary>
@@ -67,21 +69,10 @@ namespace TestFramework
         /// <returns>True if yes, else no.</returns>
         public bool IsValidLeftNavItem(int index, out string itemText)
         {
-            Browser.Wait(By.CssSelector("ul.LeftNav-links > li:nth-child(" + (int)(index + 1) + ") > a"));
             var element = Browser.FindElement(By.CssSelector("ul.LeftNav-links > li:nth-child(" + (int)(index + 1) + ") > a"));
             itemText = element.Text;
             string href = element.GetAttribute("href");
             return Utility.FileExist(href);
-        }
-
-        /// <summary>
-        /// Verify if the mobile menu-content is found on the page
-        /// </summary>
-        /// <returns>Trye if yes, else no.</returns>
-        public static bool IsMobileMenuContentDisplayed()
-        {
-            Browser.Wait(TimeSpan.FromSeconds(2));
-            return Browser.FindElement(By.CssSelector("div.ms-Panel-main")).Displayed;
         }
 
         /// <summary>
@@ -90,7 +81,16 @@ namespace TestFramework
         /// <returns>Trye if yes, else no.</returns>
         public static bool IsToggleMenuIconDisplayed()
         {
-            return Browser.FindElement(By.CssSelector("div.docs-MobileNav-menuButton")).Displayed;
+            return Browser.FindElement(By.CssSelector("div.docs-hamburgerButton.ms-Icon.ms-Icon--menu")).Displayed;
+        }
+
+        /// <summary>
+        /// Verify if the mobile menu-content is found on the page
+        /// </summary>
+        /// <returns>Trye if yes, else no.</returns>
+        public static bool IsMobileMenuContentDisplayed()
+        {
+            return Browser.FindElement(By.CssSelector("div.ms-Panel-contentInner")).Displayed;
         }
 
         /// <summary>
@@ -98,8 +98,8 @@ namespace TestFramework
         /// </summary>
         public static void ToggleMobileMenu()
         {
-            var element = Browser.FindElement(By.CssSelector("div.docs-MobileNav-menuButton"));
-            var panelElement = Browser.FindElement(By.CssSelector("div.ms-Panel-main"));
+            var element = Browser.FindElement(By.CssSelector("div.docs-hamburgerButton"));
+            var panelElement = Browser.FindElement(By.CssSelector("div.ms-Panel-contentInner"));
             if (element.Displayed && !panelElement.Displayed)
             {
                 Browser.Click(element);
@@ -109,9 +109,9 @@ namespace TestFramework
             {
                 //Click at any position outside the menu to hide it
                 Actions action = new Actions(Browser.webDriver);
-                int offX = panelElement.Size.Width + 100;
-                int offY = panelElement.Size.Height / 2;
-                action.MoveToElement(panelElement,offX,offY);
+                int offX = panelElement.Location.X + panelElement.Size.Width + 50;
+                int offY = panelElement.Location.Y + panelElement.Size.Height / 2;
+                action.MoveByOffset(offX, offY);
                 action.Click().Build().Perform();
             }
         }

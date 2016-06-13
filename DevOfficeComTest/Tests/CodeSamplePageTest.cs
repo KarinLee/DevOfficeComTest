@@ -17,8 +17,7 @@ namespace Tests
         [ClassInitialize]
         public static void ClassInitialize(TestContext context)
         {
-            Browser.Initialize("code-samples");
-            Browser.SetWaitTime(TimeSpan.FromSeconds(30));
+            Browser.Initialize();
         }
 
         [ClassCleanup]
@@ -29,6 +28,7 @@ namespace Tests
         [TestInitialize]
         public void TestInitialize()
         {
+            Browser.SetWaitTime(TimeSpan.FromSeconds(Utility.DefaultWaitTime*3));
             Browser.Goto(Browser.BaseAddress + "/code-samples");
         }
 
@@ -37,6 +37,7 @@ namespace Tests
         {
             Browser.Goto(Browser.BaseAddress + "/code-samples");
             Utility.ExecuteClearFilters();
+            Browser.SetWaitTime(TimeSpan.FromSeconds(Utility.DefaultWaitTime));
         }
         #endregion
 

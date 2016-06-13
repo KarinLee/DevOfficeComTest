@@ -17,6 +17,12 @@ namespace Tests
             Browser.Initialize();
         }
 
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            Browser.Goto(Browser.BaseAddress);
+        }
+
         [TestMethod]
         public void BVT_S02_TC01_CanGoToGettingStartedPage()
         {
@@ -57,12 +63,7 @@ namespace Tests
                         Assert.IsTrue(Pages.Navigation.IsAtResourcePage(item), string.Format("The menu item {0} is not opened currectly.", item.ToString()));
                         Browser.SetWaitTime(TimeSpan.FromSeconds(Utility.DefaultWaitTime));
                         break;
-					case (MenuItemOfResource.MiniLabs):
-                        Browser.SetWaitTime(TimeSpan.FromSeconds(30));
-                        Pages.Navigation.Select("Resources", item.ToString());
-						Assert.IsTrue(Browser.Title == "Office Dev Center - mini-labs");
-						break;
-					default:
+                    default:
                         Pages.Navigation.Select("Resources", item.ToString());
                         //Browser.Wait(TimeSpan.FromSeconds(10));
                         Assert.IsTrue(Pages.Navigation.IsAtResourcePage(item), string.Format("The menu item {0} is not opened currectly.", item.ToString()));
@@ -98,7 +99,7 @@ namespace Tests
             isRedirected = Utility.IsUrlRedirected(url);
             Assert.IsTrue(isRedirected, string.Format("The custom alias {0} is not redirected.", url));
 
-            url = Browser.BaseAddress + "/snack-videos!"; 
+            url = Browser.BaseAddress + "/snack-videos!";
             isRedirected = Utility.IsUrlRedirected(url);
             Assert.IsTrue(isRedirected, string.Format("The custom alias {0} is not redirected.", url));
 
@@ -138,7 +139,6 @@ namespace Tests
                 {
                     case (MenuItemOfResource.AppRegistrationTool):
                     case (MenuItemOfResource.APISandbox):
-                    case (MenuItemOfResource.MiniLabs):
                         break;
                     case (MenuItemOfResource.Training):
                         Browser.SetWaitTime(TimeSpan.FromSeconds(30));

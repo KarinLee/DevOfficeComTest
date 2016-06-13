@@ -9,7 +9,9 @@ namespace TestFramework
         private IWebElement fabricPageTitle;
         public string FabricPageTitle
         {
-            get { return fabricPageTitle.Text; }
+            get {
+                Browser.Wait(By.CssSelector("a#docs-PagesBannerLogo"));
+                return fabricPageTitle.Text; }
         }
     }
 }

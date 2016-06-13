@@ -18,7 +18,7 @@ namespace SearchEngineTest
         static string searchEngine = ConfigurationManager.AppSettings["SearchEngine"].ToLower();
         public static IWebDriver WebDriver;
         static int lowestRanking = Int32.Parse(ConfigurationManager.AppSettings["LowestRanking"]);
-
+        static string baseAddress;
         [ClassInitialize]
         public static void ClassInitialize(TestContext context)
         {
@@ -42,6 +42,14 @@ namespace SearchEngineTest
             int waitTime = Int32.Parse(ConfigurationManager.AppSettings["WaitTime"]);
             WebDriver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(waitTime));
             WebDriver.Manage().Timeouts().SetPageLoadTimeout(TimeSpan.FromSeconds(waitTime));
+            if (searchEngine.Equals("bing"))
+        {
+            baseAddress = "http://www.bing.com";
+            }
+            else if (searchEngine.Equals("google"))
+            {
+                baseAddress = "http://www.google.com/ncr";
+            }
         }
 
         [ClassCleanup]
@@ -55,7 +63,7 @@ namespace SearchEngineTest
         [TestMethod]
         public void BVT_S01_TC01_CanFindGraphSite()
         {
-            WebDriver.Navigate().GoToUrl("http://" + searchEngine + ".com");
+            WebDriver.Navigate().GoToUrl(baseAddress);
             int ranking;
 
             DateTime time = DateTime.Now;
@@ -108,7 +116,7 @@ namespace SearchEngineTest
         [TestMethod]
         public void BVT_S01_TC02_CanFindOfficeDevCenterSite()
         {
-            WebDriver.Navigate().GoToUrl("http://" + searchEngine + ".com");
+            WebDriver.Navigate().GoToUrl(baseAddress);
             int ranking;
 
             DateTime time = DateTime.Now;

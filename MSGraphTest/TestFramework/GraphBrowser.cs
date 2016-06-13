@@ -49,7 +49,7 @@ namespace TestFramework
 
         public static string Url
         {
-            get { return webDriver.Url; }
+            get { return webDriver.Url.EndsWith("/") ? webDriver.Url.Substring(0, webDriver.Url.Length - 1) : webDriver.Url; }
         }
 
         public static void Close()

@@ -16,16 +16,6 @@
         /// The result description
         /// </summary>
         public string Description;
-        
-        /// <summary>
-        /// The count of views
-        /// </summary>
-        public long ViewCount;
-
-        /// <summary>
-        /// The updated date
-        /// </summary>
-        public DateTime? UpdatedDate;
 
         /// <summary>
         /// The detail link
