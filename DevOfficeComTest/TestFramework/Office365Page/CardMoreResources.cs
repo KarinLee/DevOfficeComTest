@@ -14,37 +14,37 @@ namespace TestFramework.Office365Page
         public void OutlookDevCenter()
         {
             resourceKeyword = "Outlook Dev Center";
-            Browser.Click(Browser.Driver.FindElement(By.XPath("//div[@onclick=\"window.open('https://dev.outlook.com/RestGettingStarted/Overview');\"]")));
+            Browser.Click(Browser.Driver.FindElement(By.XPath("//*[@onclick=\"window.open('https://dev.outlook.com/RestGettingStarted/Overview');\"]")));
         }
         public void Training()
         {
             resourceKeyword = "Training";
-            Browser.Click(Browser.Driver.FindElement(By.XPath("//div[@onclick=\"window.open('http://dev.office.com/training');\"]")));
+            Browser.Click(Browser.Driver.FindElement(By.XPath("//*[@onclick=\"window.open('http://dev.office.com/training');\"]")));
         }
         public void APIReferences()
         {
             resourceKeyword = "API catalog";
-            Browser.Click(Browser.Driver.FindElement(By.XPath("//div[@onclick=\"window.open('https://msdn.microsoft.com/en-us/office/office365/howto/rest-api-overview');\"]")));
+            Browser.Click(Browser.Driver.FindElement(By.XPath("//*[@onclick=\"window.open('https://msdn.microsoft.com/en-us/office/office365/howto/rest-api-overview');\"]")));
         }
         public void CodeSamples()
         {
             resourceKeyword = "Code Samples";
-            Browser.Click(Browser.Driver.FindElement(By.XPath("//div[@onclick=\"window.open('http://dev.office.com/code-samples#?filters=office%20365%20app');\"]")));
+            Browser.Click(Browser.Driver.FindElement(By.XPath("//*[@onclick=\"window.open('http://dev.office.com/code-samples#?filters=office%20365%20app');\"]")));
         }
         public void AzureAppAndPermissions()
         {
             resourceKeyword = "Azure";
-            Browser.Click(Browser.Driver.FindElement(By.XPath("//div[@onclick=\"window.open('https://msdn.microsoft.com/en-us/office/office365/howto/add-common-consent-manually');\"]")));
+            Browser.Click(Browser.Driver.FindElement(By.XPath("//*[@onclick=\"window.open('https://msdn.microsoft.com/en-us/office/office365/howto/add-common-consent-manually');\"]")));
         }
         public void AddToO365AppLauncher()
         {
             resourceKeyword = "app launcher";
-            Browser.Click(Browser.Driver.FindElement(By.XPath("//div[@id=\"next-step\"]/div/div[6]/table/tbody/tr/td[1]/p/a")));
+            Browser.Click(Browser.Driver.FindElement(By.XPath("//div[@id='next-step']/div/div/table/tbody/tr/td[1]/p/a")));
         }
         public void SubmitToOfficeStore()
         {
             resourceKeyword = "Office Store";
-            Browser.Click(Browser.Driver.FindElement(By.XPath("//div[@id=\"next-step\"]/div/div[6]/table/tbody/tr/td[2]/p/a")));
+            Browser.Click(Browser.Driver.FindElement(By.XPath("//*[@id=\"next-step\"]/div/div/table/tbody/tr/td[2]/p/a")));
         }
         public bool IsShowingCorrectResourcePage()
         {

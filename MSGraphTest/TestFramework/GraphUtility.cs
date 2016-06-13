@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Net;
 using System.Text;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 
 namespace TestFramework
@@ -297,13 +298,24 @@ namespace TestFramework
         /// <summary>
         /// Input a query string on Graph explorer page
         /// </summary>
-        /// <param name="queryString">The query string to input</param>
-        public static void InputExplorerQueryString(string queryString)
+        /// <param name="version">The target service version</param>
+        /// <param name="request">The resource to access/manipulate in the Microsoft Graph API request</param>
+        public static void InputExplorerQueryString(string version,string resource)
         {
+            string lcn = GetLCN();
+            string request;
+            if(lcn.Equals("zh-cn"))
+            {
+                request = "https://microsoftgraph.chinacloudapi.cn/" + version + "/" + resource;
+            }
+            else
+            {
+                request = "https://graph.microsoft.com/" + version + "/" + resource;
+            }
             GraphBrowser.Wait(By.XPath(@"//input[@id=""queryBar""]"));
             var inputElement = GraphBrowser.Driver.FindElement(By.XPath(@"//input[@id=""queryBar""]"));
             inputElement.Clear();
-            inputElement.SendKeys(queryString);
+            inputElement.SendKeys(request);
         }
 
         /// <summary>
@@ -367,7 +379,7 @@ namespace TestFramework
             string subJsonString = jsonString.Substring(propertyValueStartIndex);
             int propertyValueEndIndex;
             propertyValueEndIndex = subJsonString.IndexOf("\"\"");
-            
+
             return subJsonString.Substring(1, propertyValueEndIndex - 1);
         }
 
@@ -511,6 +523,7 @@ namespace TestFramework
             return isMatched;
         }
 
+
         public static void ClickLogin()
         {
             GraphBrowser.Wait(By.XPath("//a[@ng-click='login()']"));
@@ -565,6 +578,74 @@ namespace TestFramework
             string restPart = GraphBrowser.Url.Substring(url.IndexOf("://") + 3);
             string lcnName = restPart.Split('/')[1];
             return lcnName;
+        }
+
+        /// <summary>
+        /// Try to find a cooperation note on Chinese Explorer page.
+        /// </summary>
+        /// <returns>True if found, else no.</returns>
+        public static bool FindCHNExplorerNote()
+        {
+            var noteElement = GraphBrowser.FindElement(By.XPath("//div[contains(text(),'注意')]"));
+            return (noteElement != null);
+        }
+
+        /// <summary>
+        /// Verify whether the requests on Chinese Explorer page are valid
+        /// </summary>
+        /// <param name="incorrectRequest">The invalid request (if any) for chinese endpoint</param>
+        /// <returns>True if all requests are valid, else false.</returns>
+        public static bool VerifyExplorerRequestListOnCHNEndpoint(out string incorrectRequest)
+        {
+            incorrectRequest = string.Empty;
+            var requestCount = GraphBrowser.webDriver.FindElements(By.CssSelector("datalist#requestList>option")).Count;
+            for (int i = 0; i < requestCount; i++)
+            {
+                var requestOption = GraphBrowser.webDriver.FindElements(By.CssSelector("datalist#requestList>option"))[i];
+                string request = requestOption.GetAttribute("value");
+                if (!request.StartsWith("https://microsoftgraph.chinacloudapi.cn/"))
+                {
+                    incorrectRequest = request;
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public static List<SearchedResult> SearchText(string keyWord)
+        {
+            List<SearchedResult> searchedResults = new List<SearchedResult>();
+
+            var element = GraphBrowser.FindElement(By.CssSelector("input#q"));
+            element.Clear();
+            element.SendKeys(keyWord);
+            var searchButton = GraphBrowser.FindElement(By.XPath("//button[text()='Search']"));
+            GraphBrowser.Click(searchButton);
+
+            GraphBrowser.Wait(By.CssSelector("ul#local-docs-ul>li"));
+            int resultCount = GraphBrowser.webDriver.FindElements(By.CssSelector("ul#local-docs-ul>li")).Count;
+            for (int i = 0; i < resultCount; i++)
+            {
+                SearchedResult result = new SearchedResult();
+                result.Name = GraphBrowser.webDriver.FindElement(By.CssSelector("ul#local-docs-ul>li:nth-child(" + (int)(i + 2) + ")>div > div.event-info > div > div.col-xs-8.name.cp1")).Text;
+                result.Description = GraphBrowser.webDriver.FindElement(By.CssSelector("ul#local-docs-ul>li:nth-child(" + (int)(i + 2) + ")> div > div> div.desc")).Text;
+                result.DetailLink = GraphBrowser.webDriver.FindElement(By.CssSelector("ul#local-docs-ul>li:nth-child(" + (int)(i + 2) + ") > div > div.event-info > div > div.col-xs-8.event-links > a")).GetAttribute("href");
+                searchedResults.Add(result);
+            }
+            return searchedResults;
+        }
+
+        public static bool CheckUrl(string url)
+        {
+            bool success = false;
+            using (var client = new HttpClient())
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, url);
+                var response = client.SendAsync(request).Result;
+                string content = response.Content.ReadAsStringAsync().Result;
+                success = !content.Contains("NotFound.htm");
+            }
+            return success;
         }
     }
 }

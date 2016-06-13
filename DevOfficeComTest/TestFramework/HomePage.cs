@@ -8,54 +8,13 @@ namespace TestFramework
 {
     public class HomePage : BasePage
     {
-		private static string PageTitle = "Office Dev Center - Office Dev Center";
-        
-        public void SlideToLeftMenuItem()
-        {
-            var element = Browser.Driver.FindElement(By.CssSelector("#carousel > a.left.carousel-control"));
-            Browser.Click(element);
-            Browser.Wait(TimeSpan.FromSeconds(1));
-        }
+        private static string PageTitle = "Office Dev Center - Office Dev Center";
 
         public void SlideToRightMenuItem()
         {
             var element = Browser.Driver.FindElement(By.CssSelector("#carousel > a.right.carousel-control"));
             Browser.Click(element);
             Browser.Wait(TimeSpan.FromSeconds(1));
-        }
-
-        public void ClickSliderMenu(SliderMenuItem item)
-        {
-            string selector = "#carousel > ol > li:nth-child(" + (int)(item + 1) + ")";
-            var element = Browser.Driver.FindElement(By.CssSelector(selector));
-            Browser.Click(element);
-            Browser.Wait(TimeSpan.FromSeconds(1));
-        }
-
-        public SliderMenuItem GetCurrentMenuItem()
-        {
-            var contentElement = Browser.Driver.FindElement(By.CssSelector("#carousel > div > div.item.active > div > div > div > div > h1"));
-            string itemString = contentElement.Text.Replace(" ", "");
-            SliderMenuItem menuItem;
-            Enum.TryParse<SliderMenuItem>(itemString, out menuItem);
-            return menuItem;
-        }
-
-        public bool IsSliderMenuItemActive(SliderMenuItem item)
-        {
-            string selector = "#carousel > ol > li:nth-child(" + (int)(item + 1) + ")";
-            var element = Browser.Driver.FindElement(By.CssSelector(selector));
-            var contentElement = Browser.Driver.FindElement(By.CssSelector("#carousel > div > div.item.active > div > div > div > div > h1"));
-            bool isMenuItemActive = element.GetAttribute("class").Contains("active");
-            bool isMenuContentDisplayed = contentElement.Text.Replace(" ", "").Contains(item.ToString());
-            if (element.Displayed)
-            {
-                return isMenuItemActive && isMenuContentDisplayed;
-            }
-            else
-            {
-                return isMenuContentDisplayed;
-            }
         }
 
         public bool IsAt()
@@ -73,7 +32,7 @@ namespace TestFramework
                     {
                         string Url = item.GetAttribute("style");
                         Url = Browser.BaseAddress + Url.Substring(Url.IndexOf('/'), Url.LastIndexOf('"') - Url.IndexOf('/'));
-                        if (!Utility.ImageExist(Url))
+                        if (!Utility.FileExist(Url))
                         {
                             return false;
                         }
@@ -87,7 +46,7 @@ namespace TestFramework
                         IWebElement subItem = item.FindElement(By.CssSelector("a>div>div>div"));
                         string Url = subItem.GetAttribute("style");
                         Url = Browser.BaseAddress + Url.Substring(Url.IndexOf('/'), Url.LastIndexOf('"') - Url.IndexOf('/'));
-                        if (!Utility.ImageExist(Url))
+                        if (!Utility.FileExist(Url))
                         {
                             return false;
                         }
@@ -99,16 +58,61 @@ namespace TestFramework
             }
         }
 
+        public void SelectSignup()
+        {
+            Browser.Wait(By.CssSelector("div.white-box>div>a.sign-up-link"));
+            var element = Browser.FindElement(By.CssSelector("div.white-box>div>a.sign-up-link"));
+            Browser.Click(element);
+        }
+
         public bool CanDisplayCorrectTradeMark()
         {
             IWebElement element = Browser.Driver.FindElement(By.CssSelector("#layout-footer > div > div > div > div.clearfix > div > div > div.col-xs-6.col-md-12.col-lg-12.visible-md.visible-lg.privacy-links > ul > li"));
             return element.Text.Contains(DateTime.Now.Year.ToString());
         }
 
-        public bool IsSliderMenuItemDisplayed()
+        /// <summary>
+        /// Select a product on home page to get started
+        /// </summary>
+        /// <param name="item">The product to select</param>
+        public void SelectGetStartedProduct(OfficeAppItem item)
         {
-            var element = Browser.Driver.FindElement(By.CssSelector("#carousel > ol > li"));
-            return element.Displayed;
+            Browser.Wait(By.XPath("//span[contains(@class,'devoffice-product')]/span[text()='" + item.ToString() + "']/ancestor::a"));
+            var element = Browser.FindElement(By.XPath("//span[contains(@class,'devoffice-product')]/span[text()='" + item.ToString() + "']/ancestor::a"));
+            Browser.Click(element);
+        }
+
+        /// <summary>
+        /// Select Graph link on the home page
+        /// </summary>
+        public void SelectMSGraph()
+        {
+            Browser.Wait(By.XPath("//img/parent::a[contains(@href,'graph')]"));
+            var element = Browser.FindElement(By.XPath("//img/parent::a[contains(@href,'graph')]"));
+            Browser.Click(element);
+        }
+
+        /// <summary>
+        /// Select Build link on the home page
+        /// </summary>
+        /// <param name="scheduledEventTime">The string indicates event's Time</param>
+        /// <param name="selectBuildEvent">True if select the special build event link,false if select the Build icon </param>
+        public void SelectBuild(out string scheduledEventTime,bool selectBuildEvent = false)
+        {
+            if (selectBuildEvent)
+            {
+                Browser.Wait(By.CssSelector("div.build-banner-content>div>a.event-title.primary"));
+                var element = Browser.FindElement(By.CssSelector("div.build-banner-content>div>a.event-title.primary"));
+                scheduledEventTime = element.Text;
+                Browser.Click(element);
+            }
+            else
+            {
+                Browser.Wait(By.CssSelector("div.build-banner-content>a.build-logo"));
+                var element = Browser.FindElement(By.CssSelector("div.build-banner-content>a.build-logo"));
+                scheduledEventTime = string.Empty;
+                Browser.Click(element);
+            }
         }
     }
 

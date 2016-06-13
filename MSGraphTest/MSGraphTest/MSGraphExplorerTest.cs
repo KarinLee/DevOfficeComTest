@@ -11,10 +11,24 @@ namespace MSGraphTest
     [TestClass]
     public class MSGraphExplorerTest
     {
+        static string userName;
+        static string userPassword;
+        
         [ClassInitialize]
         public static void ClassInitialize(TestContext context)
         {
             GraphBrowser.Initialize();
+            string lcn = GraphUtility.GetLCN();
+            if (lcn.Equals("zh-cn"))
+            {
+                userName = GraphUtility.GetConfigurationValue("GraphExplorerInChinaUserName");
+                userPassword = GraphUtility.GetConfigurationValue("GraphExplorerInChinaPassword");
+            }
+            else
+            {
+                userName = GraphUtility.GetConfigurationValue("GraphExplorerUserName");
+                userPassword = GraphUtility.GetConfigurationValue("GraphExplorerPassword");
+            }
         }
 
         [ClassCleanup]
@@ -36,15 +50,9 @@ namespace MSGraphTest
         public void Acceptance_Graph_S05_TC01_CanLogin()
         {
             TestHelper.VerifyAndSelectExplorerOnNavBar();
-            if (GraphUtility.IsLoggedIn())
-            {
-                GraphUtility.ClickLogout();
-            }
-            GraphUtility.ClickLogin();
-            GraphUtility.Login(
-                GraphUtility.GetConfigurationValue("GraphExplorerUserName"),
-                GraphUtility.GetConfigurationValue("GraphExplorerPassword"));
-            Assert.IsTrue(GraphUtility.IsLoggedIn(GraphUtility.GetConfigurationValue("GraphExplorerUserName")), "");
+            TestHelper.SigninExplorer(userName, userPassword);
+
+            Assert.IsTrue(GraphUtility.IsLoggedIn(userName), "Login can succeed");
         }
 
         /// <summary>
@@ -54,7 +62,6 @@ namespace MSGraphTest
         public void Comps_Graph_S05_TC02_CanGetMe()
         {
             TestHelper.VerifyAndSelectExplorerOnNavBar();
-            string userName = GraphUtility.GetConfigurationValue("GraphExplorerUserName");
 
             if (!GraphUtility.IsLoggedIn(userName))
             {
@@ -62,20 +69,16 @@ namespace MSGraphTest
                 {
                     GraphUtility.ClickLogout();
                 }
-                GraphUtility.ClickLogin();
-
-                GraphUtility.Login(
-                    userName,
-                    GraphUtility.GetConfigurationValue("GraphExplorerPassword"));
+                TestHelper.SigninExplorer(userName, userPassword);
             }
 
-            GraphUtility.InputExplorerQueryString("https://graph.microsoft.com/v1.0/me" + "\n");
+            GraphUtility.InputExplorerQueryString("v1.0", "me" + "\n");
             GraphBrowser.Wait(TimeSpan.FromSeconds(10));
             string response = GraphUtility.GetExplorerResponse();
-            string mail = GraphUtility.GetProperty(response, "mail");
+            string userPrincipalName = GraphUtility.GetProperty(response, "userPrincipalName");
             Assert.AreEqual(
                 userName,
-                mail,
+                userPrincipalName,
                 @"GET ""me"" can obtain the correct response");
         }
 
@@ -86,30 +89,22 @@ namespace MSGraphTest
         public void Comps_Graph_S05_TC03_CanSwitchAPIVersion()
         {
             TestHelper.VerifyAndSelectExplorerOnNavBar();
-            string userName = GraphUtility.GetConfigurationValue("GraphExplorerUserName");
+            TestHelper.SigninExplorer(userName, userPassword);
 
-            if (!GraphUtility.IsLoggedIn())
-            {
-                GraphUtility.ClickLogin();
-
-                GraphUtility.Login(
-                    userName,
-                    GraphUtility.GetConfigurationValue("GraphExplorerPassword"));
-            }
             //v1.0
-            GraphUtility.InputExplorerQueryString("https://graph.microsoft.com/v1.0/me" + "\n");
+            GraphUtility.InputExplorerQueryString("v1.0", "me" + "\n");
             GraphBrowser.Wait(TimeSpan.FromSeconds(10));
             string v10Response = GraphUtility.GetExplorerResponse();
             string oDataContext = GraphUtility.GetProperty(v10Response, "@odata.context");
-            Assert.IsTrue(oDataContext.Contains("https://graph.microsoft.com/v1.0"),
+            Assert.IsTrue(oDataContext.Contains("/v1.0"),
                 "Setting a v1.0 query string should get a v1.0 response.");
 
             //vBeta
-            GraphUtility.InputExplorerQueryString("https://graph.microsoft.com/beta/me" + "\n");
+            GraphUtility.InputExplorerQueryString("beta", "me" + "\n");
             GraphBrowser.Wait(TimeSpan.FromSeconds(10));
             string betaResponse = GraphUtility.GetExplorerResponse();
             oDataContext = GraphUtility.GetProperty(betaResponse, "@odata.context");
-            Assert.IsTrue(oDataContext.Contains("https://graph.microsoft.com/beta"),
+            Assert.IsTrue(oDataContext.Contains("/beta"),
                 "Setting a vBeta query string should get a vBeta response.");
         }
 
@@ -120,16 +115,8 @@ namespace MSGraphTest
         public void Comps_Graph_S05_TC04_CanPatchMe()
         {
             TestHelper.VerifyAndSelectExplorerOnNavBar();
-            string userName = GraphUtility.GetConfigurationValue("GraphExplorerUserName");
+            TestHelper.SigninExplorer(userName, userPassword);
 
-            if (!GraphUtility.IsLoggedIn())
-            {
-                GraphUtility.ClickLogin();
-
-                GraphUtility.Login(
-                    userName,
-                    GraphUtility.GetConfigurationValue("GraphExplorerPassword"));
-            }
             //Change the operation from GET to PATCH
             GraphUtility.ClickButton("GET");
             GraphUtility.Click("PATCH");
@@ -137,14 +124,14 @@ namespace MSGraphTest
             Dictionary<string, string> dic = new Dictionary<string, string>();
             dic.Add("jobTitle", jobTitle);
             GraphUtility.InputExplorerJSONBody(dic);
-            GraphUtility.InputExplorerQueryString("https://graph.microsoft.com/v1.0/me" + "\n");
+            GraphUtility.InputExplorerQueryString("v1.0", "me" + "\n");
             GraphBrowser.WaitForExploreResponse();
             string patchResponse = GraphUtility.GetExplorerResponse();
 
             //Change the operation from PATCH to GET
             GraphUtility.ClickButton("PATCH");
             GraphUtility.Click("GET");
-            GraphUtility.InputExplorerQueryString("https://graph.microsoft.com/v1.0/me" + "\n");
+            GraphUtility.InputExplorerQueryString("v1.0", "me" + "\n");
             string getResponse = GraphUtility.GetExplorerResponse();
             //The response doesn't change means no GET response is returned.So wait and re-obtain it
             int waitTime = Int32.Parse(GraphUtility.GetConfigurationValue("WaitTime"));
@@ -161,6 +148,8 @@ namespace MSGraphTest
             Assert.AreEqual(jobTitle, newjobTitle, "The patched property should be updated accordingly");
         }
 
+        
+
         /// <summary>
         /// Verify whether a group can be "Post"ed and "Delete"ed
         /// </summary>
@@ -168,10 +157,9 @@ namespace MSGraphTest
         public void Comps_Graph_S05_TC05_CanPostDeleteGroup()
         {
             TestHelper.VerifyAndSelectExplorerOnNavBar();
+
             int waitTime = Int32.Parse(GraphUtility.GetConfigurationValue("WaitTime"));
             int retryCount = Int32.Parse(GraphUtility.GetConfigurationValue("RetryCount"));
-
-            string userName = GraphUtility.GetConfigurationValue("GraphExplorerUserName");
 
             if (!GraphUtility.IsLoggedIn())
             {
@@ -179,7 +167,7 @@ namespace MSGraphTest
 
                 GraphUtility.Login(
                     userName,
-                    GraphUtility.GetConfigurationValue("GraphExplorerPassword"));
+                    userPassword);
             }
 
             //Change the operation from GET to POST
@@ -194,7 +182,7 @@ namespace MSGraphTest
             postProperties.Add("securityEnabled", "true");
             postProperties.Add("mailNickname", "TestGroupMail");
             GraphUtility.InputExplorerJSONBody(postProperties);
-            GraphUtility.InputExplorerQueryString("https://graph.microsoft.com/v1.0/groups" + "\n");
+            GraphUtility.InputExplorerQueryString("v1.0", "groups" + "\n");
             GraphBrowser.WaitForExploreResponse();
             string postResponse = GraphUtility.GetExplorerResponse();
             string postID = GraphUtility.GetProperty(postResponse, "id");
@@ -202,7 +190,7 @@ namespace MSGraphTest
             // Reload the page to empty the response
             GraphBrowser.Refresh();
             //Check whether the created group can be gotten
-            GraphUtility.InputExplorerQueryString("https://graph.microsoft.com/v1.0/groups/" + postID + "\n");
+            GraphUtility.InputExplorerQueryString("v1.0", "groups/" + postID + "\n");
             GraphBrowser.WaitForExploreResponse();
             string getResponse = GraphUtility.GetExplorerResponse();
             string getDisplayName = GraphUtility.GetProperty(getResponse, "displayName");
@@ -215,13 +203,13 @@ namespace MSGraphTest
             GraphBrowser.Refresh();
             GraphUtility.ClickButton("GET");
             GraphUtility.Click("DELETE");
-            GraphUtility.InputExplorerQueryString("https://graph.microsoft.com/v1.0/groups/" + postID + "\n");
+            GraphUtility.InputExplorerQueryString("v1.0", "groups/" + postID + "\n");
             GraphBrowser.WaitForExploreResponse();
             string deleteResponse = GraphUtility.GetExplorerResponse();
 
             GraphUtility.Click("DELETE");
             GraphUtility.ClickButton("GET");
-            GraphUtility.InputExplorerQueryString("https://graph.microsoft.com/v1.0/groups/" + postID + "\n");
+            GraphUtility.InputExplorerQueryString("v1.0", "groups/" + postID + "\n");
             int i = 0;
             do
             {
@@ -233,6 +221,33 @@ namespace MSGraphTest
             Assert.IsTrue(
                 getResponse.Contains("Request_ResourceNotFound"),
                 "The group should be deleted successfully");
+        }
+
+        /// <summary>
+        /// Verify whether there is a cooperation note should exist on Chinese explorer page.
+        /// </summary>
+        [TestMethod]
+        public void Comps_Graph_S05_TC06_CanFindNoteOnChineseExplorerPage()
+        {
+            GraphBrowser.Goto(GraphUtility.RemoveRedundantPartsfromExtractBaseAddress() + "/zh-cn");
+            TestHelper.VerifyAndSelectExplorerOnNavBar();
+            bool isFound = GraphUtility.FindCHNExplorerNote();
+            Assert.IsTrue(isFound, "A graph explorer note for China should exist at the bottom of the page");
+        }
+
+        /// <summary>
+        /// Verify whether the request list on Chinese explorer page is valid.
+        /// </summary>
+        [TestMethod]
+        public void Comps_Graph_S05_TC07_IsRequestListValidForChinaEndpoint()
+        {
+            GraphBrowser.Goto(GraphUtility.RemoveRedundantPartsfromExtractBaseAddress() + "/zh-cn");
+            TestHelper.VerifyAndSelectExplorerOnNavBar();
+            string incorrectRequest;
+            bool isValid = GraphUtility.VerifyExplorerRequestListOnCHNEndpoint(out incorrectRequest);
+            Assert.IsTrue(isValid,
+                "{0} is incorrect on Chinese Explorer page",
+                isValid ? "No request" : incorrectRequest);
         }
     }
 }

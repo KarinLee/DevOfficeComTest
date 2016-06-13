@@ -19,7 +19,7 @@ namespace TestFramework
         [FindsBy(How = How.CssSelector, Using = "#navbar-collapse-1 > ul > li:nth-child(3) > a")]
         private IWebElement codesamplesLinkElement;
 
-        [FindsBy(How = How.CssSelector, Using = "#navbar-collapse-1 > ul > li:nth-child(5) > a")]
+        [FindsBy(How = How.XPath, Using = "//div[@id='navbar-collapse-1']/ul/li[@aria-label='Documentation']/a")]
         private IWebElement documentationLinkElement;
 
         public void Select(string menuName, string itemName = "")
@@ -58,7 +58,8 @@ namespace TestFramework
                         case (MenuItemOfExplore.WhyOffice):
                         case (MenuItemOfExplore.OfficeUIFabric):
                         case (MenuItemOfExplore.MicrosoftGraph):
-                            item = Browser.Driver.FindElement(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > ul > li:nth-child(" + ((int)exploreItem + 1) + ") > a"));
+                            string itemText = EnumExtension.GetDescription(exploreItem);
+                            item = Browser.Driver.FindElement(By.XPath("//div[@id='navbar-collapse-1']/ul/li/div/div/ul/li/a[text()='"+itemText+"']"));
                             break;
                         case (MenuItemOfExplore.Android):
                         case (MenuItemOfExplore.DotNET):
@@ -68,7 +69,7 @@ namespace TestFramework
                         case (MenuItemOfExplore.PHP):
                         case (MenuItemOfExplore.Python):
                         case (MenuItemOfExplore.Ruby):
-                            item = Browser.Driver.FindElement(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > div.tier-3.col-md-6.col-sm-5 > ul > li:nth-child(" + ((int)exploreItem - 13) + ") > a"));
+                            item = Browser.Driver.FindElement(By.CssSelector("ul.tier-3__list > li:nth-child(" + ((int)exploreItem - 13) + ") > a"));
                             break;
                         default:
                             IReadOnlyList<IWebElement> elements = Browser.Driver.FindElements(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > div.tier-2.col-md-3.col-sm-4 > ul > li> a"));
@@ -102,26 +103,9 @@ namespace TestFramework
 
                 if (Enum.TryParse(itemName, out documentationItem))
                 {
-                    IWebElement item = null;
-                    var elements = Browser.Driver.FindElements(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > ul > li> a"));
-                    for (int i = 0; i < elements.Count; i++)
-                    {
-                        string description = EnumExtension.GetDescription(documentationItem);
-                        if (elements[i].Text.ToLower().Contains(description.ToLower()))
-                        {
-                            item = elements[i];
-                            break;
-                        }
-                        else
-                        {
-                            // In case of elements expire, reload them
-                            elements = Browser.Driver.FindElements(By.CssSelector("div#navbar-collapse-1 > ul > li.subnav__item.dropdown-toggle.dropdown.open > div > div > ul > li> a"));
-                        }
-                    }
-                    if (item != null)
-                    {
-                        Browser.Click(item);
-                    }
+                    string description = EnumExtension.GetDescription(documentationItem);
+                    var element = Browser.FindElement(By.XPath("//li[@aria-label='Documentation']/div/div/ul/li[@aria-label='" + description + "']/a"));
+                    Browser.Click(element);
                 }
             }
         }
@@ -133,20 +117,25 @@ namespace TestFramework
             switch (productName)
             {
                 case ("Outlook"):
-                    bool canSwitchWindow = Browser.SwitchToNewWindow();
                     bool isAtOutlookPage = false;
-                    if (canSwitchWindow)
+                    bool shouldSwitchToNewWindow = Browser.webDriver.WindowHandles.Count > 1;
+                    if (shouldSwitchToNewWindow)
                     {
-                        int i = 0;
-                        while (i < retryCount && !isAtOutlookPage)
-                        {
-                            var outlookPage = new NewWindowPage();
-                            isAtOutlookPage = outlookPage.IsAt(productName);
-                            i++;
-                        }
+                        Browser.SwitchToNewWindow();
+                    }
+                    int i = 0;
+                    while (i < retryCount && !isAtOutlookPage)
+                    {
+                        var outlookPage = new NewWindowPage();
+                        isAtOutlookPage = outlookPage.IsAt(productName);
+                        i++;
+                    }
+                    if (shouldSwitchToNewWindow)
+                    {
                         Browser.SwitchBack();
                     }
                     Browser.GoBack();
+
                     return isAtOutlookPage;
                 case ("DotNET"):
                 case ("Node"):
@@ -231,10 +220,6 @@ namespace TestFramework
             int i = 0;
             switch (item)
             {
-                case (MenuItemOfResource.MiniLabs):
-                    string miniLabsName = EnumExtension.GetDescription(item).Replace("-", " ").ToLower();
-                    isAtResourcePage = resourcePage.ResourceName.ToLower().Contains(miniLabsName);
-                    break;
                 case (MenuItemOfResource.SnackDemoVideos):
                     string snackVideosName = EnumExtension.GetDescription(item).Replace("Demo ", "").ToLower();
                     isAtResourcePage = resourcePage.ResourceName.ToLower().Contains(snackVideosName);
@@ -343,13 +328,15 @@ namespace TestFramework
                 canSwitchWindow = Browser.SwitchToNewWindow();
                 if (canSwitchWindow)
                 {
-                    isAtDocumentationPage = documentationPage.DocumentationTitle.ToLower().Contains(pageTitle.ToLower());
+                    isAtDocumentationPage = documentationPage.DocumentationTitle.ToLower().Contains(pageTitle.ToLower()) 
+                        || Browser.webDriver.Url.ToLower().Contains(pageTitle.ToLower());
                     Browser.SwitchBack();
                 }
             }
             else
             {
-                isAtDocumentationPage = documentationPage.DocumentationTitle.ToLower().Contains(pageTitle.ToLower());
+                isAtDocumentationPage = documentationPage.DocumentationTitle.ToLower().Contains(pageTitle.ToLower())
+                || Browser.webDriver.Url.ToLower().Contains(pageTitle.ToLower());
             }
             Browser.GoBack();
             return isAtDocumentationPage;

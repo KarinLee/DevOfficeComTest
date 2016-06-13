@@ -14,7 +14,7 @@ namespace TestFramework
             IWebElement element = Browser.Driver.FindElement(By.Id("banner-image"));
             string Url = element.GetAttribute("style");
             Url = Browser.BaseAddress + Url.Substring(Url.IndexOf('/'), Url.LastIndexOf('"') - Url.IndexOf('/'));
-            return Utility.ImageExist(Url);
+            return Utility.FileExist(Url);
         }
 
         public CodeSamplesPage()
@@ -31,13 +31,13 @@ namespace TestFramework
                     IWebElement element = Browser.Driver.FindElement(By.Id("banner-image"));
                     string Url = element.GetAttribute("style");
                     Url = Browser.BaseAddress + Url.Substring(Url.IndexOf('/'), Url.LastIndexOf('"') - Url.IndexOf('/'));
-                    return Utility.ImageExist(Url);
+                    return Utility.FileExist(Url);
                 case (CodeSamplePageImages.Icons):
                     var elements = Browser.Driver.FindElements(By.CssSelector("img.img-responsive"));
                     foreach (IWebElement item in elements)
                     {
                         Url = item.GetAttribute("src");
-                        if (!Utility.ImageExist(Url))
+                        if (!Utility.FileExist(Url))
                         {
                             return false;
                         }
